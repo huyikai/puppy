@@ -1,0 +1,107 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import EndMark from '@/components/EndMark.astro';
+import ArchiveRow from '@/components/ArchiveRow.astro';
+
+import {
+  getAllDays,
+  getManifest,
+  resolvePhotos,
+  resolveVideos,
+  formatChineseDate,
+  dayNumber,
+} from '@/lib/days';
+
+const days = await getAllDays();
+
+const daysData = await Promise.all(
+  days.map(async (entry) => {
+    const manifest = await getManifest(entry.data.date);
+    const photos = resolvePhotos(entry.data.photos, manifest);
+    const videos = resolveVideos(entry.data.videos, manifest);
+    return {
+      date: entry.data.date,
+      dateLabel: formatChineseDate(entry.data.date),
+      dayN: dayNumber(entry.data.date),
+      title: entry.data.title,
+      photos,
+      videos,
+    };
+  }),
+);
+
+const byMonth = new Map<string, typeof daysData>();
+for (const d of daysData) {
+  const month = d.date.slice(0, 7);
+  if (!byMonth.has(month)) byMonth.set(month, []);
+  byMonth.get(month)!.push(d);
+}
+const months = Array.from(byMonth.keys()).sort().reverse();
+---
+
+<BaseLayout title="更早" description="更早的白板记录">
+  <Header slot="header" />
+
+  <article class="container-plate pt-12 md:pt-20 pb-16">
+
+    <header class="mb-12 md:mb-16 reveal">
+      <p class="folio" style="color: var(--accent);">ARCHIVE</p>
+      <h1
+        class="mt-6 font-medium text-ink tracking-tight leading-[1.0]"
+        style="font-size: clamp(2.5rem, 8vw, 5.5rem);"
+      >
+        更早
+      </h1>
+      <p class="mt-6 text-base md:text-lg text-ink-soft leading-relaxed">
+        早些日子的白板。共 {daysData.length} 天。
+      </p>
+    </header>
+
+    <p class="reveal mb-10">
+      <a
+        href="/"
+        class="link-underline text-sm text-ink-soft hover:text-ink inline-flex items-center gap-2"
+      >
+        <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        回到最近的记录
+      </a>
+    </p>
+
+    <div class="space-y-16 md:space-y-24 stagger">
+      {months.map((month) => {
+        const monthDays = byMonth.get(month)!;
+        return (
+          <section>
+            <header class="mb-6 flex items-baseline gap-4">
+              <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight tabular-nums">
+                {month.replace('-', ' 年 ') + ' 月'}
+              </h2>
+              <span class="text-sm text-ink-muted tabular-nums">
+                {monthDays.length} 天
+              </span>
+            </header>
+
+            <div class="space-y-4 md:space-y-6">
+              {monthDays.map((d) => (
+                <ArchiveRow
+                  date={d.date}
+                  dateLabel={d.dateLabel}
+                  dayN={d.dayN}
+                  title={d.title}
+                  photos={d.photos}
+                  videos={d.videos}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+
+  </article>
+
+  <EndMark slot="footer" />
+</BaseLayout>

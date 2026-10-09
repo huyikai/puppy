@@ -11,12 +11,16 @@ import {
   getManifest,
   resolvePhotos,
   resolveVideos,
+  daysOld,
 } from '@/lib/days';
 
-const days = await getAllDays();
+const RECENT_DAYS = 30;
+const allDays = await getAllDays();
+const recentDays = allDays.slice(0, RECENT_DAYS);
+const olderDays = allDays.slice(RECENT_DAYS);
 
-const daysData = await Promise.all(
-  days.map(async (entry) => {
+const recentData = await Promise.all(
+  recentDays.map(async (entry) => {
     const manifest = await getManifest(entry.data.date);
     const photos = resolvePhotos(entry.data.photos, manifest);
     const videos = resolveVideos(entry.data.videos, manifest);
@@ -24,7 +28,8 @@ const daysData = await Promise.all(
   }),
 );
 
-const totalSpreads = daysData.length;
+const daysAlive = daysOld();
+const hasOlder = olderDays.length > 0;
 ---
 
 <BaseLayout>
@@ -32,18 +37,33 @@ const totalSpreads = daysData.length;
 
   <BookCover />
 
-  <!-- 内容开始 -->
-  <section>
-    {daysData.map(({ entry, photos, videos }, i) => (
+  <section class="container-wide py-16 md:py-24">
+
+    {recentData.map(({ entry, photos, videos }, i) => (
       <Spread
         date={entry.data.date}
         meta={entry.data}
         photos={photos}
         videos={videos}
         spreadIndex={i + 1}
-        totalSpreads={totalSpreads}
+        totalSpreads={recentData.length}
       />
     ))}
+
+    {hasOlder && (
+      <div class="reveal mt-12 md:mt-20 text-center">
+        <a
+          href="/archive/"
+          class="inline-flex items-center gap-2 px-5 py-2.5 border border-line text-ink text-sm hover:border-ink transition-colors duration-base"
+        >
+          查看更早的 {olderDays.length} 天
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+    )}
+
   </section>
 
   <EndMark slot="footer" />

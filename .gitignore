@@ -49,6 +49,7 @@ v2-*.png
 v3-*.png
 v4-*.png
 v5-*.png
+v6-*.png
 .playwright-mcp/
 
 # 用户本地原始素材（拷贝到 src/content/days/<date>/raw/ 后无需保留）

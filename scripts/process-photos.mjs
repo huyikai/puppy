@@ -7,7 +7,7 @@
  *   - 视频：MOV/MP4 原样复制到 public/processed/，并用 ffmpeg 抽 1s 处帧作 poster
  *
  * 输出：
- *   - public/processed/<date>/<basename>-{400,800,1600}.webp
+ *   - public/processed/<date>/<basename>-{400,800,1200}.webp
  *   - public/processed/<date>/<videoname>.<ext>
  *   - public/processed/<date>/<videoname>-poster.jpg
  *   - public/processed/<date>/_manifest.json（前端用）
@@ -17,8 +17,8 @@
  *   node scripts/process-photos.mjs 2026-10-08 # 只处理某一天
  * ============================================================================ */
 
-import { readdir, mkdir, writeFile, copyFile, stat, readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { readdir, mkdir, writeFile, copyFile, stat } from 'node:fs/promises';
+import { existsSync, statSync, readFileSync } from 'node:fs';
 import { join, parse, basename, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { dirname as pathDirname } from 'node:path';
@@ -57,7 +57,7 @@ const ROOT = join(__dirname, '..');
 const DAYS_SRC = join(ROOT, 'src/content/days');
 const PROCESSED_BASE = join(ROOT, 'public/processed');
 
-const SIZES = [400, 800, 1600];
+const SIZES = [400, 800, 1200];
 const WEBP_QUALITY = 80;
 const PHOTO_EXTS = new Set(['.heic', '.heif', '.jpg', '.jpeg', '.png', '.webp']);
 const VIDEO_EXTS = new Set(['.mov', '.mp4', '.m4v']);
@@ -74,40 +74,54 @@ function logErr(msg) {
 }
 
 /**
- * 处理单张图片
+ * 处理单张图片。
+ * force=true 时无视 mtime，直接处理（用于修复空 manifest 等场景）。
  */
-async function processPhoto(srcPath, outDir, base, ext) {
-  const outName = base; // 输出名去掉原后缀
-  const results = {};
+async function tryProcessPhoto(srcPath, outDir, base, ext, force = false) {
+  const outName = base;
+
+  if (!force) {
+    // 增量检查：所有目标文件存在且都比源文件新 → 跳过
+    let inMtime = 0;
+    let allUpToDate = false;
+    try {
+      inMtime = statSync(srcPath).mtimeMs;
+      allUpToDate = SIZES.every((w) => {
+        const p = join(outDir, `${outName}-${w}.webp`);
+        if (!existsSync(p)) return false;
+        return statSync(p).mtimeMs >= inMtime;
+      });
+    } catch { /* fall through */ }
+
+    if (allUpToDate) return { processed: false };
+  }
 
   try {
-    // HEIC 用 heic-convert 解码，其他格式直接走 sharp
     const heicBuffer = await decodeToBuffer(srcPath, ext);
     const input = heicBuffer || srcPath;
 
     const img = sharp(input, { failOn: 'none' });
     const meta = await img.metadata();
     const aspectRatio = meta.width && meta.height ? meta.width / meta.height : 1;
-    results.width = meta.width;
-    results.height = meta.height;
-    results.aspectRatio = Number(aspectRatio.toFixed(4));
 
     for (const w of SIZES) {
       const outPath = join(outDir, `${outName}-${w}.webp`);
-      // 默认 sharp 不调用 keepMetadata / withMetadata，会自动剥离全部 EXIF
-      // （包含 GPS 等隐私字段）。这正是我们想要的。
       await sharp(input, { failOn: 'none' })
         .rotate()
-        .resize({
-          width: w,
-          withoutEnlargement: true,
-        })
+        .resize({ width: w, withoutEnlargement: true })
         .webp({ quality: WEBP_QUALITY, effort: 4 })
         .toFile(outPath);
     }
 
-    results.sizes = SIZES;
-    return results;
+    return {
+      processed: true,
+      result: {
+        width: meta.width,
+        height: meta.height,
+        aspectRatio: Number(aspectRatio.toFixed(4)),
+        sizes: SIZES,
+      },
+    };
   } catch (err) {
     logErr(`图片 ${base}${ext} 处理失败：${err.message}`);
     throw err;
@@ -119,9 +133,24 @@ async function processPhoto(srcPath, outDir, base, ext) {
  */
 async function processVideo(srcPath, outDir, date, base, ext) {
   const videoOutPath = join(outDir, `${base}${ext}`);
-  await copyFile(srcPath, videoOutPath);
-
   const posterOutPath = join(outDir, `${base}-poster.jpg`);
+
+  // Skip if both output files present and newer than source (增量 build)
+  if (existsSync(videoOutPath) && existsSync(posterOutPath)) {
+    try {
+      const inMtime = stat(srcPath).mtimeMs;
+      const videoMtime = stat(videoOutPath).mtimeMs;
+      const posterMtime = stat(posterOutPath).mtimeMs;
+      if (videoMtime >= inMtime && posterMtime >= inMtime) {
+        return {
+          video: `/processed/${date}/${base}${ext}`,
+          poster: `/processed/${date}/${base}-poster.jpg`,
+        };
+      }
+    } catch { /* fall through */ }
+  }
+
+  await copyFile(srcPath, videoOutPath);
 
   // 1. 先用 ffprobe 拿视频时长
   let duration = 0;
@@ -146,7 +175,7 @@ async function processVideo(srcPath, outDir, date, base, ext) {
       '-frames:v', '1',
       '-update', '1',
       '-q:v', '3',
-      '-vf', 'scale=-2:1600',
+      '-vf', 'scale=-2:1200',
       posterOutPath,
     ], { timeout: 15000 });
   } catch (err) {
@@ -159,7 +188,7 @@ async function processVideo(srcPath, outDir, date, base, ext) {
         '-frames:v', '1',
         '-update', '1',
         '-q:v', '3',
-        '-vf', 'scale=-2:1600',
+        '-vf', 'scale=-2:1200',
         posterOutPath,
       ], { timeout: 15000 });
     } catch (err2) {
@@ -186,6 +215,23 @@ async function processDay(date) {
   const outDir = join(PROCESSED_BASE, date);
   await mkdir(outDir, { recursive: true });
 
+  // 读旧 manifest（用于跳过时直接复用元数据）
+  const manifestPath = join(outDir, '_manifest.json');
+  let oldManifest = {};
+  if (existsSync(manifestPath)) {
+    try {
+      oldManifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+    } catch { /* ignore */ }
+  }
+  const oldPhotosByName = new Map();
+  for (const p of oldManifest.photos ?? []) {
+    if (p.original) oldPhotosByName.set(p.original, p);
+  }
+  const oldVideosByName = new Map();
+  for (const v of oldManifest.videos ?? []) {
+    if (v.original) oldVideosByName.set(v.original, v);
+  }
+
   const entries = await readdir(rawDir);
   const photos = [];
   const videos = [];
@@ -195,7 +241,8 @@ async function processDay(date) {
   for (const name of entries) {
     if (name.startsWith('.')) continue;
     const srcPath = join(rawDir, name);
-    const s = await stat(srcPath);
+    let s;
+    try { s = statSync(srcPath); } catch { continue; }
     if (!s.isFile()) continue;
 
     const { name: base, ext } = parse(name);
@@ -203,18 +250,39 @@ async function processDay(date) {
 
     if (PHOTO_EXTS.has(lowerExt)) {
       try {
-        const result = await processPhoto(srcPath, outDir, base, ext);
-        photos.push({
-          src: `/processed/${date}/${base}-800.webp`,
-          srcset: SIZES.map((w) => `/processed/${date}/${base}-${w}.webp ${w}w`).join(', '),
-          width: result.width,
-          height: result.height,
-          aspectRatio: result.aspectRatio,
-          original: name,
-        });
-        log('  🖼 ', `${name} → ${base}-{400,800,1600}.webp`);
+        const { processed, result } = await tryProcessPhoto(srcPath, outDir, base, ext);
+        if (processed && result) {
+          photos.push({
+            src: `/processed/${date}/${base}-800.webp`,
+            srcset: SIZES.map((w) => `/processed/${date}/${base}-${w}.webp ${w}w`).join(', '),
+            width: result.width,
+            height: result.height,
+            aspectRatio: result.aspectRatio,
+            original: name,
+          });
+          log('  🖼 ', `${name} → ${base}-{${SIZES.join(',')}}.webp`);
+        } else {
+          // 跳过：复用旧 manifest 的元数据（零开支）
+          const old = oldPhotosByName.get(name);
+          if (old) {
+            photos.push(old);
+          } else {
+            // 旧 manifest 没这条：强制重新处理（ignore mtime）
+            const fallback = await tryProcessPhoto(srcPath, outDir, base, ext, true);
+            if (fallback.processed && fallback.result) {
+              photos.push({
+                src: `/processed/${date}/${base}-800.webp`,
+                srcset: SIZES.map((w) => `/processed/${date}/${base}-${w}.webp ${w}w`).join(', '),
+                width: fallback.result.width,
+                height: fallback.result.height,
+                aspectRatio: fallback.result.aspectRatio,
+                original: name,
+              });
+            }
+          }
+        }
       } catch (e) {
-        // 失败时跳过，但继续处理其他文件
+        // skip
       }
     } else if (VIDEO_EXTS.has(lowerExt)) {
       try {

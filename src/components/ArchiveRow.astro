@@ -1,0 +1,53 @@
+---
+import PhotoPlate from './PhotoPlate.astro';
+import type { PhotoMeta, VideoMeta } from '@/lib/days';
+
+export interface Props {
+  date: string;
+  dateLabel: string;
+  dayN: number;
+  title?: string;
+  photos: PhotoMeta[];
+  videos: VideoMeta[];
+}
+
+const { date, dateLabel, dayN, title, photos, videos } = Astro.props;
+const dateISO = date.replace(/-/g, '.');
+const lead = photos[0];
+---
+
+<a
+  href={`/day/${date}/`}
+  class="group block hover:bg-bg-paper transition-colors duration-base -mx-2 px-2 py-3"
+  data-spread-row
+>
+  <div class="flex items-baseline gap-4 mb-3">
+    <time class="font-semibold text-base md:text-lg text-ink tabular-nums tracking-tight">
+      {dateISO}
+    </time>
+    <span class="text-xs text-ink-muted tabular-nums">
+      第 {dayN} 天
+    </span>
+    {title && (
+      <span class="text-sm text-ink-soft truncate">
+        {title}
+      </span>
+    )}
+    <span class="ml-auto text-xs text-ink-muted tabular-nums">
+      {photos.length} 张{videos.length > 0 ? ` · ${videos.length} 段视频` : ''}
+    </span>
+  </div>
+
+  {lead && (
+    <div class="overflow-hidden plate" style={`aspect-ratio: ${lead.aspectRatio};`}>
+      <PhotoPlate
+        src={lead.src}
+        srcset={lead.srcset}
+        alt={`白板. ${dateLabel}`}
+        aspectRatio={lead.aspectRatio}
+        onClick={false}
+        forceEager={false}
+      />
+    </div>
+  )}
+</a>

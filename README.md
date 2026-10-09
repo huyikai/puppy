@@ -90,7 +90,8 @@ videos:              # 可选
 按 design-taste-frontend skill 设计：把站点当成一本摄影书，不当成网站。
 
 - **Cover（首页）**：小方形 portrait + 大标题 + 出生日期
-- **Spread（每天）**：每 Day 一页，顶部一行日期 + 第几天/共几天，下方先一张 lead photo，再 2-3 列 grid 剩余照片，最后视频
+- **Spreads（首页最近 30 天）**：每 Day 一页，顶部一行日期 + 第几天/共几天，下方先一张 lead photo，再 2-3 列 grid 剩余照片，最后视频
+- **Archive（`/archive/`）**：30 天之前的更早日子，按月分组，每行是日期 + 缩略图 + 标题 + 数量统计
 - **About（关于页）**：标题 + portrait + 手记 + 居中排列的事实列表
 - **EndMark（页面底部）**：大数字 + 备忘话 + ©
 
@@ -113,8 +114,9 @@ src/
     Lightbox.astro       # 全屏图片预览
     EndMark.astro         # 页面底部
   pages/
-    index.astro          # 首页（封面 + 所有 spread）
+    index.astro          # 首页（封面 + 最近 30 天 spread）
     day/[date].astro     # 单日详情（一个 spread）
+    archive/index.astro  # 更早的记录（按月分组）
     about.astro          # 关于页
     404.astro
   layouts/
