@@ -1,0 +1,375 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import EndMark from '@/components/EndMark.astro';
+import { daysOld } from '@/lib/days';
+
+const days = daysOld();
+---
+
+<BaseLayout title="养护" description="白板的幼犬期养护指南">
+  <Header slot="header" at="care" />
+
+  <article class="container-wide pt-12 md:pt-20 pb-16">
+
+    <header class="max-w-[920px] mx-auto mb-14 md:mb-20 reveal">
+      <h1 class="font-medium text-ink tracking-tight leading-[1.0]"
+          style="font-size: clamp(2.5rem, 8vw, 5.5rem);">
+        养护
+      </h1>
+      <p class="mt-6 text-base md:text-lg text-ink-soft leading-relaxed max-w-prose">
+        白板现在出生 {days} 天。这份手册记录幼犬期的关键养护知识，方便随时查阅。
+      </p>
+    </header>
+
+    <!-- Layout: left sticky nav + right content -->
+    <div class="max-w-[1100px] mx-auto flex gap-12 lg:gap-16">
+
+      <!-- Sticky anchor nav (hidden on mobile) -->
+      <nav class="hidden lg:block w-48 shrink-0" aria-label="章节导航">
+        <div class="sticky top-24 space-y-3">
+          <a href="#feeding" class="care-nav-link">喂养</a>
+          <a href="#sleep" class="care-nav-link">睡眠</a>
+          <a href="#warmth" class="care-nav-link">保暖</a>
+          <a href="#health" class="care-nav-link">健康与疫苗</a>
+          <a href="#socialize" class="care-nav-link">社会化</a>
+          <a href="#toilet" class="care-nav-link">如厕启蒙</a>
+          <a href="#play" class="care-nav-link">运动与玩耍</a>
+          <a href="#safety" class="care-nav-link">安全须知</a>
+          <a href="#milestones" class="care-nav-link">发育里程碑</a>
+        </div>
+      </nav>
+
+      <!-- Mobile anchor (horizontal scroll) -->
+      <nav class="lg:hidden -mx-5 px-5 mb-8 overflow-x-auto">
+        <div class="flex gap-2 pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+          <a href="#feeding" class="care-chip">喂养</a>
+          <a href="#sleep" class="care-chip">睡眠</a>
+          <a href="#warmth" class="care-chip">保暖</a>
+          <a href="#health" class="care-chip">健康</a>
+          <a href="#socialize" class="care-chip">社会化</a>
+          <a href="#toilet" class="care-chip">如厕</a>
+          <a href="#play" class="care-chip">玩耍</a>
+          <a href="#safety" class="care-chip">安全</a>
+          <a href="#milestones" class="care-chip">里程碑</a>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0 space-y-16 md:space-y-24">
+
+        <!-- 喂养 -->
+        <section id="feeding" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">喂养</h2>
+          <div class="space-y-8">
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">现在（28 天）吃什么</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                羊奶粉泡幼犬粮，搅成糊状。温度控制在 38-40°C（手腕内侧试温不烫）。
+                每次少量，让白板慢慢舔食，不要一次倒太多。
+              </p>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">每天几顿</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                少食多餐，每天 4-5 餐。间隔 4-6 小时。固定时间喂养，帮助建立消化节律。
+              </p>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">每顿多少</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                按体重的 5% 估算。一只 28 天的边牧幼犬约 2-3kg，每餐约 30-50g（湿重）。
+                以吃完不剩为准，宁少勿多。观察粪便调整：太稀减量，太干加量。
+              </p>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">怎么喂</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                温水泡软幼犬粮（约 15 分钟）→ 搅成糊状 → 少量多次用勺子或手指引导舔食。
+                食盆要浅、稳，每次喂完清洗干净。
+              </p>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">喂多久（阶段性过渡）</h3>
+              <ul class="space-y-2 text-base text-ink-soft leading-relaxed">
+                <li>28-45 天：糊状为主，羊奶粉辅助</li>
+                <li>45-60 天：逐渐减少水分，过渡到软颗粒</li>
+                <li>60-90 天：基本吃干幼犬粮，每天 3-4 餐</li>
+                <li>90 天后：每天 3 餐，逐步减少到 2 餐</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">后续</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                6 月龄前以幼犬粮为主。6 月龄后根据体型和活动量调整。成年后每天 1-2 餐。
+                零食不超过每日总热量的 10%。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 睡眠 -->
+        <section id="sleep" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">睡眠</h2>
+          <div class="space-y-6">
+            <p class="text-base text-ink-soft leading-relaxed">
+              幼犬每天需要 18-20 小时睡眠。生长激素在深睡时分泌，睡眠不足影响发育。
+            </p>
+            <ul class="space-y-3 text-base text-ink-soft leading-relaxed">
+              <li>固定窝/笼子位置，安静、温暖、避光</li>
+              <li>笼内训练从小开始：笼子 = 安全的窝，不是惩罚</li>
+              <li>白天有人时可以睡在笼外，夜间回笼</li>
+              <li>不要在幼犬睡觉时打扰，让它自己醒</li>
+              <li>夜间叫唤：先确认不是饿/冷/要排泄，再不理它（不要养成叫=被关注的习惯）</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 保暖 -->
+        <section id="warmth" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">保暖</h2>
+          <div class="space-y-6">
+            <p class="text-base text-ink-soft leading-relaxed">
+              28 天的幼犬体温调节能力还不完善，容易着凉。环境温度保持在 25-28°C。
+            </p>
+            <ul class="space-y-3 text-base text-ink-soft leading-relaxed">
+              <li>暖水袋（裹毛巾）或宠物加热垫（低档）放在窝的一角</li>
+              <li>避免直吹空调/风扇，尤其夜间</li>
+              <li>窝里铺柔软的旧衣服或毛毯，方便换洗</li>
+              <li>如果白板蜷缩发抖、不愿离开暖源，说明太冷了</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 健康与疫苗 -->
+        <section id="health" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">健康与疫苗</h2>
+          <div class="space-y-8">
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">驱虫</h3>
+              <ul class="space-y-2 text-base text-ink-soft leading-relaxed">
+                <li>体内驱虫：28 天开始，每 2 周一次，到 12 周龄</li>
+                <li>体外驱虫：6 周龄后开始，每月一次</li>
+                <li>驱虫后观察粪便（可能有虫体排出）</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">疫苗</h3>
+              <ul class="space-y-2 text-base text-ink-soft leading-relaxed">
+                <li>第一针：42 天（二联/四联）</li>
+                <li>第二针：56 天（四联/六联）</li>
+                <li>第三针：70 天（六联/八联）</li>
+                <li>狂犬疫苗：90 天后</li>
+                <li>疫苗后 7 天内不洗澡、不出门、不接触其他狗</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">日常观察</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                每天检查：精神状态（是否活泼）、食欲（是否正常进食）、粪便（是否成形）、
+                鼻子（是否湿润）、眼睛（是否清澈）。任何异常及时就医。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 社会化 -->
+        <section id="socialize" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">社会化</h2>
+          <div class="space-y-6">
+            <p class="text-base text-ink-soft leading-relaxed">
+              3-12 周是社会化黄金期。这段时间的体验会深刻影响白板成年后的性格。
+              目标是让他觉得「世界是安全的」。
+            </p>
+            <ul class="space-y-3 text-base text-ink-soft leading-relaxed">
+              <li>接触不同声音：吸尘器、门铃、音乐、街道声（音量从小到大）</li>
+              <li>接触不同材质：地毯、瓷砖、草地、金属网</li>
+              <li>被人触摸：摸头、摸脚、摸耳朵、翻开嘴唇（模拟看牙）</li>
+              <li>接触不同的人：戴帽子/眼镜/口罩的人、不同年龄的人</li>
+              <li>每次 5-10 分钟，不强迫。如果害怕就暂停，下次再来</li>
+              <li>奖励：每次好的体验后给小零食，建立正面联想</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 如厕启蒙 -->
+        <section id="toilet" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">如厕启蒙</h2>
+          <div class="space-y-6">
+            <p class="text-base text-ink-soft leading-relaxed">
+              28 天的幼犬还不能自主控制排泄。人工喂养时需要用湿棉球轻擦腹部刺激排泄（模拟母狗舔舐）。
+            </p>
+            <ul class="space-y-3 text-base text-ink-soft leading-relaxed">
+              <li>40 天后开始观察排泄规律（通常在饭后 15-30 分钟）</li>
+              <li>固定区域铺尿垫，逐步建立「这里可以」的联想</li>
+              <li>排泄后立即奖励，不要惩罚意外</li>
+              <li>60 天后可以开始户外如厕训练（疫苗完成后）</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 运动与玩耍 -->
+        <section id="play" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">运动与玩耍</h2>
+          <div class="space-y-6">
+            <p class="text-base text-ink-soft leading-relaxed">
+              幼犬关节和骨骼还在发育，运动要短时多次，不要强迫。
+            </p>
+            <ul class="space-y-3 text-base text-ink-soft leading-relaxed">
+              <li>每次玩耍 5-10 分钟，每天 3-4 次</li>
+              <li>安全玩具：软胶咬咬、毛绒（无小零件）、嗅闻垫</li>
+              <li>藏食玩具：把零食藏在嗅闻垫里，激发探索欲</li>
+              <li>不要跳跃、上下楼梯、剧烈奔跑（关节未发育好）</li>
+              <li>玩耍后让他安静休息，不要过度兴奋</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- 安全须知 -->
+        <section id="safety" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">安全须知</h2>
+          <div class="space-y-8">
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">有毒食物</h3>
+              <ul class="space-y-2 text-base text-ink-soft leading-relaxed">
+                <li>巧克力（可可碱中毒）</li>
+                <li>葡萄/葡萄干（肾衰竭）</li>
+                <li>洋葱/大蒜（溶血性贫血）</li>
+                <li>木糖醇（低血糖、肝衰竭）</li>
+                <li>咖啡因、酒精、澳洲坚果</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">家居隐患</h3>
+              <ul class="space-y-2 text-base text-ink-soft leading-relaxed">
+                <li>电线/充电线（咬断触电）</li>
+                <li>小物件（纽扣、硬币、橡皮筋，误食窒息）</li>
+                <li>清洁剂、杀虫剂、药品</li>
+                <li>高处跌落：沙发/床边、阳台</li>
+                <li>笼子/围栏：避免卡头卡脚</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-medium text-lg text-ink mb-3">出门安全</h3>
+              <p class="text-base text-ink-soft leading-relaxed">
+                疫苗完成前不要去公共场所（草地、狗公园）。避免接触其他动物的粪便。
+                使用胸背带（不要用项圈，伤颈椎）。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 发育里程碑 -->
+        <section id="milestones" class="scroll-mt-24 reveal">
+          <h2 class="font-medium text-2xl md:text-3xl text-ink tracking-tight mb-8">发育里程碑</h2>
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="border border-line p-5">
+                <p class="text-xs text-ink-muted mb-2">2-3 周</p>
+                <p class="text-sm text-ink leading-relaxed">睁眼、开始爬行、开始出牙</p>
+              </div>
+              <div class="border border-line p-5">
+                <p class="text-xs text-ink-muted mb-2">3-4 周</p>
+                <p class="text-sm text-ink leading-relaxed">开始站立行走、乳牙萌出、开始尝试固体食物</p>
+              </div>
+              <div class="border border-line p-5">
+                <p class="text-xs text-ink-muted mb-2">4-6 周</p>
+                <p class="text-sm text-ink leading-relaxed">断奶过渡、社会化开始、开始学习犬类社交</p>
+              </div>
+              <div class="border border-line p-5">
+                <p class="text-xs text-ink-muted mb-2">6-8 周</p>
+                <p class="text-sm text-ink leading-relaxed">第一针疫苗、体内驱虫、如厕训练开始</p>
+              </div>
+              <div class="border border-line p-5">
+                <p class="text-xs text-ink-muted mb-2">8-12 周</p>
+                <p class="text-sm text-ink leading-relaxed">适应新家、基础指令（坐、来）、持续社会化</p>
+              </div>
+              <div class="border border-line p-5">
+                <p class="text-xs text-ink-muted mb-2">12-16 周</p>
+                <p class="text-sm text-ink leading-relaxed">疫苗完成、可以出门散步、换牙期开始</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </article>
+
+  <EndMark slot="footer" />
+</BaseLayout>
+
+<style is:global>
+  /* Left sticky nav links */
+  .care-nav-link {
+    display: block;
+    padding: 4px 0;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    transition: color var(--dur-base) var(--ease-expo);
+  }
+  .care-nav-link:hover,
+  .care-nav-link.is-active {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* Mobile horizontal anchor chips */
+  .care-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    font-size: 0.8125rem;
+    color: var(--ink-muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: all var(--dur-base) var(--ease-expo);
+  }
+  .care-chip:hover,
+  .care-chip.is-active {
+    color: var(--ink);
+    border-color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* Hide scrollbar on mobile nav */
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script>
+  // Intersection Observer for active anchor state
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.care-nav-link, .care-chip');
+
+  if (sections.length && navLinks.length && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            navLinks.forEach((link) => {
+              link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+            });
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' },
+    );
+    sections.forEach((section) => observer.observe(section));
+  }
+
+  // Smooth scroll for anchor links
+  navLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = link.getAttribute('href')?.slice(1);
+      const target = document.getElementById(id!);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
