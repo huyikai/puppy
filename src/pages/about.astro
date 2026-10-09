@@ -10,8 +10,8 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 ---
 
 <BaseLayout
-  title="Colophon"
-  description="白板的成长日记 / 编辑信息"
+  title="关于"
+  description="白板的成长日记 / 关于"
 >
   <Header slot="header" at="colophon" />
 
@@ -19,12 +19,11 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 
     <!-- Title -->
     <header class="reveal">
-      <p class="folio" style="color: var(--accent);">COLOPHON</p>
       <h1
-        class="mt-6 font-medium text-ink tracking-tight leading-[1.0]"
+        class="font-medium text-ink tracking-tight leading-[1.0]"
         style="font-size: clamp(2.5rem, 8vw, 5.5rem);"
       >
-        编辑信息
+        关于
       </h1>
       <p class="mt-6 text-base md:text-lg text-ink-soft leading-relaxed">
         一本关于一只边牧的私人摄影记录。
@@ -50,31 +49,31 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 
       <dl class="mt-10 space-y-5 text-sm">
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
-          <dt class="folio">Subject</dt>
+          <dt class="folio">名字</dt>
           <dd class="col-span-2 text-ink">白板</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
-          <dt class="folio">Breed</dt>
-          <dd class="col-span-2 text-ink">Border Collie</dd>
+          <dt class="folio">品种</dt>
+          <dd class="col-span-2 text-ink">Border Collie 边牧</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
-          <dt class="folio">Sex</dt>
+          <dt class="folio">性别</dt>
           <dd class="col-span-2 text-ink">公</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
-          <dt class="folio">Colour</dt>
+          <dt class="folio">毛色</dt>
           <dd class="col-span-2 text-ink">黑白</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
-          <dt class="folio">Born</dt>
+          <dt class="folio">生日</dt>
           <dd class="col-span-2 text-ink tabular-nums">{birthdayLabel}</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
-          <dt class="folio">Home</dt>
+          <dt class="folio">到家</dt>
           <dd class="col-span-2 text-ink tabular-nums">{homeLabel}</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 pt-3">
-          <dt class="folio">Age</dt>
+          <dt class="folio">出生</dt>
           <dd class="col-span-2 text-ink tabular-nums">{days} 天</dd>
         </div>
       </dl>
@@ -94,20 +93,19 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 
     <hr class="hairline my-12 md:my-16" />
 
-    <!-- Production notes -->
+    <!-- 技术栈 -->
     <section class="reveal">
-      <p class="folio mb-6">PRODUCTION</p>
       <dl class="space-y-3 text-sm">
         <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">Stack</dt>
+          <dt class="folio">技术栈</dt>
           <dd class="col-span-2 text-ink-soft">Astro, Tailwind, ffmpeg</dd>
         </div>
         <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">Host</dt>
+          <dt class="folio">托管</dt>
           <dd class="col-span-2 text-ink-soft">Vercel</dd>
         </div>
         <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">Source</dt>
+          <dt class="folio">源码</dt>
           <dd class="col-span-2 text-ink-soft">
             <a
               href="https://github.com/huyikai/puppy"
@@ -120,12 +118,6 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
         </div>
       </dl>
     </section>
-
-    <!-- End marker -->
-    <div class="mt-20 md:mt-28 text-center reveal">
-      <hr class="hairline w-12 mx-auto" />
-      <p class="folio mt-6" style="color: var(--accent);">END</p>
-    </div>
 
   </article>
 

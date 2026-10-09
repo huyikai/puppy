@@ -1,6 +1,6 @@
 ---
 export interface Props {
-  /** Current location in the "book" */
+  /** Current location in the book */
   at?: 'cover' | 'spreads' | 'colophon';
 }
 
@@ -29,7 +29,7 @@ const { at = 'cover' } = Astro.props;
             ]}
           aria-current={at === 'cover' ? 'page' : undefined}
         >
-          Spreads
+          记录
         </a>
         <a
           href="/about/"
@@ -39,7 +39,7 @@ const { at = 'cover' } = Astro.props;
             ]}
           aria-current={at === 'colophon' ? 'page' : undefined}
         >
-          Colophon
+          关于
         </a>
       </nav>
     </div>
