@@ -2,9 +2,10 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
-import { AVATAR_IMAGE, HOMECOMING_DATE, daysSinceHomecoming, formatChineseDate } from '@/lib/days';
+import { AVATAR_IMAGE, BIRTHDAY, HOMECOMING_DATE, daysOld, formatChineseDate } from '@/lib/days';
 
-const days = daysSinceHomecoming();
+const days = daysOld();
+const birthdayLabel = formatChineseDate(BIRTHDAY);
 const homeLabel = formatChineseDate(HOMECOMING_DATE);
 ---
 
@@ -58,6 +59,10 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
           <div class="flex gap-3">
             <dt class="w-16 shrink-0 text-text-muted">毛色</dt>
             <dd>黑白</dd>
+          </div>
+          <div class="flex gap-3">
+            <dt class="w-16 shrink-0 text-text-muted">生日</dt>
+            <dd>{birthdayLabel}</dd>
           </div>
           <div class="flex gap-3">
             <dt class="w-16 shrink-0 text-text-muted">到家</dt>

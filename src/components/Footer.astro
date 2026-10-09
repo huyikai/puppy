@@ -1,7 +1,7 @@
 ---
-import { daysSinceHomecoming } from '@/lib/days';
+import { daysOld } from '@/lib/days';
 
-const daysAlive = daysSinceHomecoming();
+const daysAlive = daysOld();
 ---
 
 <footer class="mt-24 md:mt-32 border-t border-border-soft bg-bg-elevated/60"
@@ -10,7 +10,7 @@ const daysAlive = daysSinceHomecoming();
 
     <div>
       <p class="font-serif text-xl md:text-2xl text-text-strong">
-        白板 · 今天 <span class="text-accent">{daysAlive}</span> 天大了
+        白板 · 出生 <span class="text-accent">{daysAlive}</span> 天
       </p>
       <p class="mt-1 text-xs text-text-muted tracking-wide">
         愿他每天都比昨天更勇敢一点。

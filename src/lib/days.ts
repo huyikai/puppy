@@ -45,7 +45,10 @@ export type Manifest = {
 // 常量
 // ----------------------------------------------------------------------------
 
-/** 到家日（用于计算 N 天大） */
+/** 生日（用于计算「N 天大了」） */
+export const BIRTHDAY = '2026-09-10';
+
+/** 到家日（用于计算「Day N」） */
 export const HOMECOMING_DATE = '2026-10-08';
 
 /** Hero 用图（在首页最大那张）：从 Day 1 第一张精选中取 */
@@ -144,20 +147,32 @@ export function resolveVideos(
 // Day N 计算
 // ----------------------------------------------------------------------------
 
-/** 白板今天 N 天大（基于 HOMECOMING_DATE） */
-export function daysSinceHomecoming(now: Date = new Date()): number {
-  const home = new Date(HOMECOMING_DATE + 'T00:00:00');
+/** 通用：基于某个起点日期，计算「已过 N 天」（起点日 = 0 天，即「出生当天」） */
+function daysSinceStart(anchor: string, now: Date = new Date()): number {
+  const start = new Date(anchor + 'T00:00:00');
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const diffMs = today.getTime() - home.getTime();
-  return Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+  const diffMs = today.getTime() - start.getTime();
+  return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
 }
 
-/** 某天在白板生命中是第几天 */
+/** 白板今天出生 N 天（基于 BIRTHDAY，生日当天 = 出生 0 天） */
+export function daysOld(now: Date = new Date()): number {
+  return daysSinceStart(BIRTHDAY, now);
+}
+
+/** 白板到家 N 天（基于 HOMECOMING_DATE，到家当天 = Day 1） */
+export function daysSinceHomecoming(now: Date = new Date()): number {
+  return daysSinceStart(HOMECOMING_DATE, now) + 1;
+}
+
+/** 某天白板出生了几天 */
+export function ageOnDate(date: string): number {
+  return daysSinceStart(BIRTHDAY, new Date(date + 'T00:00:00'));
+}
+
+/** 某天是白板到家的第几天（到家 = Day 1） */
 export function dayNumber(date: string): number {
-  const target = new Date(date + 'T00:00:00');
-  const home = new Date(HOMECOMING_DATE + 'T00:00:00');
-  const diffMs = target.getTime() - home.getTime();
-  return Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+  return daysSinceStart(HOMECOMING_DATE, new Date(date + 'T00:00:00')) + 1;
 }
 
 // ----------------------------------------------------------------------------
