@@ -1,0 +1,69 @@
+---
+import { AVATAR_IMAGE, daysOld, daysSinceHomecoming } from '@/lib/days';
+
+const daysAlive = daysOld();
+const daysHome = daysSinceHomecoming();
+---
+
+{/*
+  Cover page. Title page of the photo book.
+  Centered composition: small portrait + large title + small metadata.
+  Avoids the LLM default of full-bleed photo with overlay text.
+*/}
+<section class="min-h-screen flex items-center justify-center relative">
+  <div class="container-content w-full max-w-3xl">
+
+    <div class="flex flex-col items-center text-center reveal">
+
+      <!-- Cover portrait (modest size, not full-bleed) -->
+      <div class="reveal-scale">
+        <img
+          src={AVATAR_IMAGE.src}
+          srcset={AVATAR_IMAGE.srcset}
+          sizes={AVATAR_IMAGE.sizes}
+          alt={AVATAR_IMAGE.alt}
+          width="800"
+          height="800"
+          class="w-44 h-44 md:w-56 md:h-56 object-cover plate"
+          loading="eager"
+        />
+      </div>
+
+      <!-- Title block -->
+      <h1
+        class="mt-12 md:mt-16 font-medium text-ink tracking-tight leading-[1.05]"
+        style="font-size: clamp(3rem, 9vw, 6rem);"
+      >
+        白板
+      </h1>
+
+      <p class="mt-6 md:mt-8 text-base md:text-lg text-ink-soft max-w-md leading-relaxed">
+        一只边牧，慢慢长大的样子。
+      </p>
+
+      <!-- Edition + birth metadata (sparse, sparse) -->
+      <div class="mt-10 md:mt-14 flex flex-col items-center gap-2">
+        <p class="folio" style="color: var(--accent);">
+          EDITION 001
+        </p>
+        <hr class="hairline w-12" />
+        <dl class="mt-2 text-sm text-ink-muted space-y-1 tabular-nums">
+          <div>
+            <dt class="sr-only">Born</dt>
+            <dd>Born 2026.09.10</dd>
+          </div>
+          <div>
+            <dt class="sr-only">Home</dt>
+            <dd>Home 2026.10.08</dd>
+          </div>
+          <div>
+            <dt class="sr-only">Days alive</dt>
+            <dd>{daysAlive} 天大了</dd>
+          </div>
+        </dl>
+      </div>
+
+    </div>
+
+  </div>
+</section>

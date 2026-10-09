@@ -1,9 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import PhotoCard from '@/components/PhotoCard.astro';
-import VideoCard from '@/components/VideoCard.astro';
+import EndMark from '@/components/EndMark.astro';
+import Spread from '@/components/Spread.astro';
 import Lightbox from '@/components/Lightbox.astro';
 
 import {
@@ -14,8 +13,6 @@ import {
   resolveVideos,
   formatChineseDate,
   dayNumber,
-  moodToEmoji,
-  ageOnDate,
 } from '@/lib/days';
 
 export async function getStaticPaths() {
@@ -32,9 +29,6 @@ const manifest = await getManifest(date!);
 const photos = resolvePhotos(entry.data.photos, manifest);
 const videos = resolveVideos(entry.data.videos, manifest);
 
-const dayN = dayNumber(date!);
-const dateLabel = formatChineseDate(date!);
-const ageDays = ageOnDate(date!);
 const allDays = await getAllDays();
 const idx = allDays.findIndex((d) => d.data.date === date);
 const prevDay = idx < allDays.length - 1 ? allDays[idx + 1] : null;
@@ -42,108 +36,28 @@ const nextDay = idx > 0 ? allDays[idx - 1] : null;
 ---
 
 <BaseLayout
-  title={`${dateLabel} · Day ${dayN}`}
-  description={`白板出生 ${ageDays} 天的记录`}
+  title={`${formatChineseDate(date!)} Day ${dayNumber(date!)}`}
+  description="白板的成长日记"
 >
-  <Header slot="header" current={`${dateLabel} · Day ${dayN}`} />
+  <Header slot="header" at="spreads" />
 
-  <article class="container-wide pt-12 md:pt-20 pb-20">
+  <Spread
+    date={date!}
+    meta={entry.data}
+    photos={photos}
+    videos={videos}
+    spreadIndex={idx + 1}
+    totalSpreads={allDays.length}
+  />
 
-    <!-- 返回 -->
-    <div class="mb-10 reveal">
-      <a
-        href="/"
-        class="link-underline text-small text-ink-soft hover:text-ink inline-flex items-center gap-1.5"
-      >
-        <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        回到时间线
-      </a>
-    </div>
-
-    <!-- 头部 -->
-    <header class="mb-12 md:mb-16 max-w-[920px] mx-auto reveal">
-      <div class="flex items-center gap-3 mb-3 meta-label">
-        <span>{date!.replace(/-/g, '.')}</span>
-        <span class="text-line">/</span>
-        <span>Day {dayN}</span>
-        <span class="text-line">/</span>
-        <span>出生 {ageDays} 天</span>
-        {entry.data.mood && (
-          <>
-            <span class="text-line">/</span>
-            <span class="flex items-center gap-1.5">
-              {moodToEmoji(entry.data.mood)} {entry.data.mood}
-            </span>
-          </>
-        )}
-      </div>
-      <h1 class="font-semibold text-4xl md:text-5xl text-ink leading-tight tracking-tight">
-        {entry.data.title || dateLabel}
-      </h1>
-      {entry.data.weather && (
-        <p class="mt-4 text-small text-ink-muted">天气 · {entry.data.weather}</p>
-      )}
-    </header>
-
-    <!-- 照片流 -->
-    {photos.length > 0 && (
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-[920px] mx-auto">
-        {photos.map((p, i) => {
-          const isFirst = i === 0;
-          const forceEager = i < 2;
-          return (
-            <div
-              class:list={[
-                isFirst ? 'md:col-span-2' : '',
-                isFirst ? 'reveal' : 'reveal reveal-d-' + Math.min(i, 6),
-              ]}
-            >
-              <PhotoCard
-                src={p.src}
-                srcset={p.srcset}
-                alt={`白板 · ${dateLabel} · 第${i + 1}张`}
-                aspectRatio={p.aspectRatio}
-                layout={isFirst ? 'full' : 'half'}
-                onClick={true}
-                index={i + 1}
-                caption={p.caption || undefined}
-                reveal={false}
-                forceEager={forceEager}
-              />
-            </div>
-          );
-        })}
-      </div>
-    )}
-
-    <!-- 视频 -->
-    {videos.length > 0 && (
-      <section class="mt-16 md:mt-20 max-w-[920px] mx-auto">
-        <h2 class="meta-label mb-6 reveal">Videos</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {videos.map((v, i) => (
-            <div class="reveal reveal-d-2">
-              <VideoCard
-                videoSrc={v.video}
-                posterSrc={v.poster}
-                alt={`白板 · 视频 ${i + 1}`}
-                index={photos.length + i + 1}
-                reveal={false}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-    )}
-
-    <!-- 上下日导航 -->
-    <nav class="mt-24 md:mt-32 pt-8 border-t border-line flex items-center justify-between reveal">
+  <!-- Prev / Next spread links -->
+  <nav class="container-plate mt-16 md:mt-24 reveal">
+    <hr class="hairline mb-10" />
+    <div class="flex items-center justify-between text-sm pb-12">
       {prevDay ? (
         <a
           href={`/day/${prevDay.data.date}/`}
-          class="link-underline text-small text-ink-soft hover:text-ink inline-flex items-center gap-2"
+          class="link-underline text-ink-soft hover:text-ink inline-flex items-center gap-2"
         >
           <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
@@ -155,7 +69,7 @@ const nextDay = idx > 0 ? allDays[idx - 1] : null;
       {nextDay ? (
         <a
           href={`/day/${nextDay.data.date}/`}
-          class="link-underline text-small text-ink-soft hover:text-ink inline-flex items-center gap-2"
+          class="link-underline text-ink-soft hover:text-ink inline-flex items-center gap-2"
         >
           {formatChineseDate(nextDay.data.date)}
           <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -163,10 +77,9 @@ const nextDay = idx > 0 ? allDays[idx - 1] : null;
           </svg>
         </a>
       ) : <span></span>}
-    </nav>
+    </div>
+  </nav>
 
-  </article>
-
-  <Footer slot="footer" />
+  <EndMark slot="footer" />
   <Lightbox />
 </BaseLayout>

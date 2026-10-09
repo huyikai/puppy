@@ -1,0 +1,116 @@
+---
+import PhotoPlate from './PhotoPlate.astro';
+import VideoPlate from './VideoPlate.astro';
+import {
+  formatChineseDate,
+  dayNumber,
+  type DayData,
+  type PhotoMeta,
+  type VideoMeta,
+} from '@/lib/days';
+
+export interface Props {
+  date: string;
+  meta: DayData;
+  photos: Array<PhotoMeta & { caption: string; cover: boolean }>;
+  videos?: Array<VideoMeta & { caption: string }>;
+  /** 1-based spread index, used in folio */
+  spreadIndex: number;
+  /** Total spreads, for folio display */
+  totalSpreads: number;
+}
+
+const {
+  date,
+  meta,
+  photos,
+  videos = [],
+  spreadIndex,
+  totalSpreads,
+} = Astro.props;
+
+const dayN = dayNumber(date);
+const dateLabel = formatChineseDate(date);
+const folio = String(spreadIndex).padStart(3, '0');
+const totalFolio = String(totalSpreads).padStart(3, '0');
+---
+
+{/* A spread: one Day as one page in the photo book. */}
+<article class="mb-32 md:mb-48 pt-12 md:pt-24" data-spread data-date={date}>
+
+  <!-- Spread head: date as small folio-like text, day number as larger type -->
+  <header class="container-plate mb-10 md:mb-16 reveal">
+
+    <div class="flex items-baseline justify-between gap-4 mb-6">
+      <p class="folio">{folio}</p>
+      <p class="folio">{dateLabel}</p>
+    </div>
+
+    <div class="flex items-end justify-between gap-6 border-b border-line pb-6 md:pb-10">
+      <div>
+        <p class="text-sm md:text-base text-ink-soft">
+          Day {dayN}
+        </p>
+      </div>
+      <p class="folio">
+        {folio} / {totalFolio}
+      </p>
+    </div>
+
+  </header>
+
+  {/*
+    Plates: photo 0 is the lead plate (full container width).
+    Photos 1+ are arranged as a trio (3-column) under the lead.
+    Videos slot in after the trio, same row.
+  */}
+
+  <div class="space-y-4 md:space-y-6 stagger">
+
+    {photos.length > 0 && (
+      <div class="reveal-scale">
+        <PhotoPlate
+          src={photos[0].src}
+          srcset={photos[0].srcset}
+          alt={`白板. ${dateLabel}`}
+          aspectRatio={photos[0].aspectRatio}
+          onClick={true}
+          forceEager={true}
+        />
+      </div>
+    )}
+
+    {photos.length > 1 && (
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        {photos.slice(1).map((p, i) => (
+          <div>
+            <PhotoPlate
+              src={p.src}
+              srcset={p.srcset}
+              alt={`白板. ${dateLabel}`}
+              aspectRatio={p.aspectRatio}
+              onClick={true}
+              forceEager={i < 2}
+            />
+          </div>
+        ))}
+      </div>
+    )}
+
+    {videos.length > 0 && (
+      <div class="grid grid-cols-2 gap-4 md:gap-6">
+        {videos.map((v) => (
+          <div>
+            <VideoPlate
+              videoSrc={v.video}
+              posterSrc={v.poster}
+              alt={`白板. ${dateLabel}`}
+            />
+          </div>
+        ))}
+      </div>
+    )}
+
+  </div>
+
+</article>

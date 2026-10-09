@@ -1,19 +1,18 @@
 ---
-/* 全局 Lightbox：图片预览，深色 fab */
+/* Lightbox: image preview on dark scrim. Global, one instance per page. */
 ---
 
 <div
   id="lightbox"
-  class="fixed inset-0 z-50 hidden items-center justify-center bg-bg-overlay backdrop-blur-2xl"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-bg-scrim backdrop-blur-2xl"
   role="dialog"
   aria-modal="true"
   aria-label="图片预览"
   data-lightbox
 >
-  <!-- 关闭按钮 -->
   <button
     type="button"
-    class="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-base hover:rotate-90"
+    class="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-11 h-11 flex items-center justify-center text-white transition-all duration-base hover:rotate-90"
     aria-label="关闭"
     data-lightbox-close
   >
@@ -22,10 +21,9 @@
     </svg>
   </button>
 
-  <!-- 左 -->
   <button
     type="button"
-    class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-base hover:scale-110"
+    class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center text-white transition-all duration-base hover:scale-110"
     aria-label="上一张"
     data-lightbox-prev
   >
@@ -34,10 +32,9 @@
     </svg>
   </button>
 
-  <!-- 右 -->
   <button
     type="button"
-    class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all duration-base hover:scale-110"
+    class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center text-white transition-all duration-base hover:scale-110"
     aria-label="下一张"
     data-lightbox-next
   >
@@ -46,11 +43,7 @@
     </svg>
   </button>
 
-  <!-- 图（带 scale 入场） -->
-  <div
-    class="max-w-[92vw] max-h-[88vh] reveal-scale is-visible"
-    data-lightbox-img-wrap
-  >
+  <div class="max-w-[92vw] max-h-[88vh] reveal-scale is-visible" data-lightbox-img-wrap>
     <img
       src=""
       alt=""
@@ -60,10 +53,9 @@
     />
   </div>
 
-  <!-- 底部信息 -->
-  <div class="absolute bottom-4 md:bottom-6 inset-x-0 z-10 flex flex-col items-center gap-2 px-4 pointer-events-none">
+  <div class="absolute bottom-4 md:bottom-6 inset-x-0 z-10 flex flex-col items-center gap-1 px-4 pointer-events-none">
     <p class="text-sm text-white/85 max-w-prose text-center" data-lightbox-caption></p>
-    <p class="meta-label text-white/60 tabular-nums" data-lightbox-counter></p>
+    <p class="text-xs text-white/55 tabular-nums" data-lightbox-counter></p>
   </div>
 </div>
 
@@ -93,18 +85,14 @@
       if (i >= items.length) i = 0;
       current = i;
       const it = items[i];
-      // 重新入场动效
       imgWrap.classList.remove('is-visible');
-      // 用 rAF 触发下一帧再添回 class，重启动画
       requestAnimationFrame(() => {
         imgEl.srcset = it.srcset || '';
         imgEl.src = it.src;
         imgEl.alt = it.alt || '';
         captionEl.textContent = it.caption || '';
         counterEl.textContent = `${i + 1} / ${items.length}`;
-        requestAnimationFrame(() => {
-          imgWrap.classList.add('is-visible');
-        });
+        requestAnimationFrame(() => imgWrap.classList.add('is-visible'));
       });
     }
 
@@ -128,9 +116,7 @@
     closeBtn.addEventListener('click', close);
     prevBtn.addEventListener('click', prev);
     nextBtn.addEventListener('click', next);
-    root.addEventListener('click', (e) => {
-      if (e.target === root) close();
-    });
+    root.addEventListener('click', (e) => { if (e.target === root) close(); });
 
     document.addEventListener('keydown', (e) => {
       if (root.classList.contains('hidden')) return;
@@ -142,12 +128,12 @@
     function gather(): { items: LightboxItem[]; refMap: WeakMap<Element, number> } {
       const els = Array.from(document.querySelectorAll('[data-photo="clickable"]'));
       const refMap = new WeakMap<Element, number>();
-      const list: LightboxItem[] = els.map((el) => {
+      const list: LightboxItem[] = els.map((el, i) => {
         const src = (el as HTMLElement).dataset.photoSrc || '';
         const srcset = (el as HTMLElement).dataset.photoSrcset || '';
         const alt = (el as HTMLElement).dataset.photoAlt || '';
         const caption = (el as HTMLElement).dataset.photoCaption || '';
-        refMap.set(el, els.indexOf(el));
+        refMap.set(el, i);
         return { src, srcset, alt, caption };
       });
       return { items: list, refMap };

@@ -3,14 +3,20 @@ export interface Props {
   videoSrc: string;
   posterSrc?: string | null;
   alt?: string;
+  aspectRatio?: number;
 }
 
-const { videoSrc, posterSrc, alt = '' } = Astro.props;
+const {
+  videoSrc,
+  posterSrc,
+  alt = '',
+  aspectRatio = 4 / 5,
+} = Astro.props;
 ---
 
 <figure
-  class="group relative overflow-hidden bg-ink/5"
-  style="aspect-ratio: 4 / 5;"
+  class="plate overflow-hidden group"
+  style={`aspect-ratio: ${aspectRatio};`}
   data-video-card
   data-video-src={videoSrc}
   data-video-poster={posterSrc}
@@ -23,7 +29,7 @@ const { videoSrc, posterSrc, alt = '' } = Astro.props;
       decoding="async"
       class="absolute inset-0 w-full h-full object-cover
              transition-transform duration-x-slow ease-expo
-             group-hover:scale-[1.04]"
+             group-hover:scale-[1.03]"
       data-video-poster
     />
   )}
@@ -46,15 +52,15 @@ const { videoSrc, posterSrc, alt = '' } = Astro.props;
     data-video-play
   >
     <span
-      class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/95
+      class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/95
              flex items-center justify-center
              transition-all duration-base ease-expo
              group-hover:scale-110 group-hover:bg-white
-             shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
+             shadow-[0_6px_24px_rgba(0,0,0,0.18)]"
     >
       <svg
         viewBox="0 0 24 24"
-        class="w-6 h-6 md:w-7 md:h-7 text-ink ml-1"
+        class="w-5 h-5 md:w-6 md:h-6 text-ink ml-0.5"
         fill="currentColor"
       >
         <path d="M8 5v14l11-7z" />
@@ -96,9 +102,7 @@ const { videoSrc, posterSrc, alt = '' } = Astro.props;
       preview.classList.remove('opacity-0');
       poster?.classList.add('opacity-0');
       preview.play().catch(() => {});
-      const v = preview as HTMLVideoElement & {
-        webkitEnterFullscreen?: () => void;
-      };
+      const v = preview as HTMLVideoElement & { webkitEnterFullscreen?: () => void };
       if (v.requestFullscreen) v.requestFullscreen();
       else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
     });

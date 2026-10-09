@@ -58,7 +58,7 @@ export const HERO_IMAGE = {
   srcset:
     '/processed/2026-10-08/IMG_1805-400.webp 400w, /processed/2026-10-08/IMG_1805-800.webp 800w, /processed/2026-10-08/IMG_1805-1600.webp 1600w',
   sizes: '100vw',
-  alt: '白板 · 边牧肖像',
+  alt: '白板肖像',
 };
 
 /** 关于页头像（方形） */

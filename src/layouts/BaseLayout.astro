@@ -5,7 +5,6 @@ export interface Props {
   title?: string;
   image?: string;
   description?: string;
-  isHome?: boolean;
 }
 
 const {
@@ -14,7 +13,7 @@ const {
   description = '一只边牧，慢慢长大的样子。',
 } = Astro.props;
 
-const fullTitle = title === '白板的成长日记' ? title : `${title} · 白板的成长日记`;
+const fullTitle = title === '白板的成长日记' ? title : `${title} / 白板的成长日记`;
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 ---
 
@@ -24,7 +23,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#FAF7F8" />
+    <meta name="theme-color" content="#F2EFE9" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="白板" />
@@ -34,7 +33,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="白板的成长日记" />
     <meta property="og:title" content={fullTitle} />
@@ -43,7 +41,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="zh_CN" />
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
@@ -63,10 +60,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 
     <slot name="footer" />
 
-    <!-- IntersectionObserver: 滚动入场动效 -->
     <script>
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const targets = document.querySelectorAll('.reveal, .reveal-scale');
+      const targets = document.querySelectorAll('.reveal, .reveal-scale, .stagger');
 
       if (reduceMotion || !('IntersectionObserver' in window)) {
         targets.forEach((el) => el.classList.add('is-visible'));
@@ -80,38 +76,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
               }
             });
           },
-          {
-            threshold: 0.08,
-            rootMargin: '0px 0px -5% 0px',
-          },
+          { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
         );
         targets.forEach((el) => observer.observe(el));
 
-        // 兜底：2 秒后仍未入场的元素强制可见（防止截图工具或爬虫永远看不到）
+        // Safety net for headless / no-scroll environments
         setTimeout(() => {
-          document.querySelectorAll('.reveal:not(.is-visible), .reveal-scale:not(.is-visible)').forEach((el) => {
-            el.classList.add('is-visible');
-          });
-        }, 2000);
-      }
-
-      // Header 滚动时加阴影（让 sticky header 与背景分离更明显）
-      const header = document.querySelector('[data-header]');
-      if (header) {
-        const updateHeader = () => {
-          if (window.scrollY > 4) header.classList.add('scrolled');
-          else header.classList.remove('scrolled');
-        };
-        window.addEventListener('scroll', updateHeader, { passive: true });
-        updateHeader();
+          document
+            .querySelectorAll('.reveal:not(.is-visible), .reveal-scale:not(.is-visible), .stagger:not(.is-visible)')
+            .forEach((el) => el.classList.add('is-visible'));
+        }, 2500);
       }
     </script>
-
-    <style is:global>
-      [data-header].scrolled {
-        border-bottom: 1px solid var(--line);
-      }
-    </style>
 
   </body>
 </html>

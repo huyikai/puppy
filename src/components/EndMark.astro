@@ -1,0 +1,50 @@
+---
+import { daysOld } from '@/lib/days';
+
+const days = daysOld();
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-32 md:mt-48" style="padding-bottom: env(safe-area-inset-bottom);">
+  <div class="container-plate">
+
+    <hr class="hairline" />
+
+    <div class="py-20 md:py-28 flex flex-col items-center text-center gap-8 md:gap-10 reveal">
+
+      <!-- The "end of edition" mark -->
+      <p class="folio" style="color: var(--accent); letter-spacing: 0.24em;">
+        END OF EDITION
+      </p>
+
+      <!-- Big serif-free countdown -->
+      <p
+        class="font-medium leading-none tracking-tight tabular-nums"
+        style="font-size: clamp(7rem, 18vw, 13rem);"
+      >
+        {days}
+      </p>
+
+      <p class="text-base text-ink-soft max-w-sm">
+        白板出生了 {days} 天。
+      </p>
+
+      <!-- Bottom meta strip -->
+      <div class="mt-12 w-full grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 text-sm text-ink-muted">
+        <div>
+          <p class="folio mb-2">Edition</p>
+          <p>001 / One</p>
+        </div>
+        <div>
+          <p class="folio mb-2">Subject</p>
+          <p>Border Collie</p>
+        </div>
+        <div class="md:text-right">
+          <p class="folio mb-2">©</p>
+          <p>{year} 白板的成长日记</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</footer>

@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import Hero from '@/components/Hero.astro';
-import DayCard from '@/components/DayCard.astro';
+import EndMark from '@/components/EndMark.astro';
+import BookCover from '@/components/BookCover.astro';
+import Spread from '@/components/Spread.astro';
 import Lightbox from '@/components/Lightbox.astro';
 
 import {
@@ -11,7 +11,6 @@ import {
   getManifest,
   resolvePhotos,
   resolveVideos,
-  daysOld,
 } from '@/lib/days';
 
 const days = await getAllDays();
@@ -25,46 +24,28 @@ const daysData = await Promise.all(
   }),
 );
 
-const daysAlive = daysOld();
+const totalSpreads = daysData.length;
 ---
 
-<BaseLayout isHome={true}>
-  <Header slot="header" isHome={true} />
+<BaseLayout>
+  <Header slot="header" at="cover" />
 
-  <Hero />
+  <BookCover />
 
-  <!-- Intro 文案（极简） -->
-  <section class="container-wide py-16 md:py-24">
-    <div class="max-w-prose reveal">
-      <p class="meta-label mb-6">Index</p>
-      <p class="text-lg md:text-xl text-ink leading-relaxed">
-        这是我家边牧白板的成长日记。<br />
-        从 2026.10.08 到家那天起，一日一记。
-      </p>
-      <p class="mt-3 text-small text-ink-muted">
-        截至今天，他已经出生 <span class="text-ink tabular-nums">{daysAlive}</span> 天。
-      </p>
-    </div>
+  <!-- Spreads begin -->
+  <section>
+    {daysData.map(({ entry, photos, videos }, i) => (
+      <Spread
+        date={entry.data.date}
+        meta={entry.data}
+        photos={photos}
+        videos={videos}
+        spreadIndex={i + 1}
+        totalSpreads={totalSpreads}
+      />
+    ))}
   </section>
 
-  <!-- 时间线 -->
-  <section class="container-wide pb-16">
-    {daysData.length === 0 ? (
-      <p class="text-center text-ink-muted">还没有任何记录。</p>
-    ) : (
-      <div class="max-w-[920px] mx-auto">
-        {daysData.map(({ entry, photos, videos }) => (
-          <DayCard
-            date={entry.data.date}
-            meta={entry.data}
-            photos={photos}
-            videos={videos}
-          />
-        ))}
-      </div>
-    )}
-  </section>
-
-  <Footer slot="footer" />
+  <EndMark slot="footer" />
   <Lightbox />
 </BaseLayout>

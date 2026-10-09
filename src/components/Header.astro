@@ -1,54 +1,47 @@
 ---
 export interface Props {
-  isHome?: boolean;
-  current?: string;
+  /** Current location in the "book" */
+  at?: 'cover' | 'spreads' | 'colophon';
 }
 
-const { isHome = false, current } = Astro.props;
+const { at = 'cover' } = Astro.props;
 ---
 
 <header
-  class="sticky top-0 z-40 bg-bg/85 backdrop-blur-md"
+  class="absolute top-0 left-0 right-0 z-30"
   style="padding-top: env(safe-area-inset-top);"
-  data-header
 >
-  <div class="container-wide h-14 md:h-16 flex items-center justify-between gap-4">
+  <div class="container-plate">
+    <div class="h-14 md:h-16 flex items-center justify-between text-sm">
+      <a
+        href="/"
+        class="font-medium tracking-tight text-ink hover:text-accent transition-colors duration-base"
+      >
+        白板
+      </a>
 
-    <a
-      href="/"
-      class="font-semibold text-base md:text-lg text-ink tracking-tight"
-      data-header-home-link
-    >
-      白板
-      <span class="text-ink-muted font-normal hidden sm:inline">
-        · 白板的成长日记
-      </span>
-    </a>
-
-    <nav class="flex items-center gap-5 md:gap-7">
-      {!isHome && (
+      <nav class="flex items-center gap-6 md:gap-8 text-ink-soft">
         <a
           href="/"
-          class="text-sm text-ink-soft hover:text-ink transition-colors duration-base"
+          class:list={[
+              at === 'cover' ? 'text-ink' : '',
+              'hover:text-ink transition-colors duration-base',
+            ]}
+          aria-current={at === 'cover' ? 'page' : undefined}
         >
-          首页
+          Spreads
         </a>
-      )}
-      <a
-        href="/about/"
-        class="text-sm text-ink-soft hover:text-ink transition-colors duration-base"
-      >
-        关于
-      </a>
-    </nav>
-
-  </div>
-
-  {current && (
-    <div class="border-t border-line">
-      <div class="container-wide h-10 flex items-center">
-        <span class="meta-label">{current}</span>
-      </div>
+        <a
+          href="/about/"
+          class:list={[
+              at === 'colophon' ? 'text-ink' : '',
+              'hover:text-ink transition-colors duration-base',
+            ]}
+          aria-current={at === 'colophon' ? 'page' : undefined}
+        >
+          Colophon
+        </a>
+      </nav>
     </div>
-  )}
+  </div>
 </header>
