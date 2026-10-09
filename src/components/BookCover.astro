@@ -39,92 +39,24 @@ const COVER_PORTRAIT = '/cover/cover-animated.webp';
       </h1>
 
       <p class="mt-6 md:mt-8 text-base md:text-lg text-ink-soft max-w-md leading-relaxed">
-        今天已经 {daysAlive} 天大了～
+        今天已经 {daysAlive} 天大了
       </p>
 
       <p class="mt-4 text-sm text-ink-muted tabular-nums">
         2026 年 9 月 10 日出生
       </p>
 
-      <!-- Scroll hint with bounce animation. Text updates by JS based on device. -->
-      <button
-        type="button"
-        class="mt-12 md:mt-16 group flex flex-col items-center gap-2 text-2xs text-ink-muted hover:text-ink-soft transition-colors"
-        data-scroll-hint
-        aria-label="向下滚动查看白板的最新动态"
-      >
-        <span class="tracking-wide" data-hint-text>滚动查看</span>
-        <svg
-          viewBox="0 0 24 24"
-          class="w-3.5 h-3.5 hint-arrow"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          aria-hidden="true"
-        >
-          <path d="M12 4v14m0 0l-5-5m5 5l5-5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-
-    </div>
+      </div>
 
   </div>
 </section>
 
-<style>
-  /* Subtle infinite float on the down-arrow */
-  @keyframes hintFloat {
-    0%, 100% { transform: translateY(0); opacity: 0.5; }
-    50%      { transform: translateY(4px); opacity: 1; }
-  }
-  .hint-arrow {
-    animation: hintFloat 2.4s ease-in-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hint-arrow { animation: none; }
-  }
-</style>
-
 <script>
-  // Cover page: one-time bounce + device-aware hint text + click-to-scroll-past.
+  // Cover page: one-time bounce + click-to-scroll-past (no visible scroll cue).
   const cover = document.querySelector<HTMLElement>('[data-cover]');
-  const hint  = document.querySelector<HTMLElement>('[data-scroll-hint]');
-  const hintText = document.querySelector<HTMLElement>('[data-hint-text]');
 
   if (cover) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // -- Device-aware hint text ------------------------------------------
-    // Show only one cue based on actual input + viewport. Detected once,
-    // re-evaluated on resize. Text describes the action verb only — never
-    // the device name itself.
-    const HINT_TEXT = {
-      mobile:  '上滑',
-      tablet:  '滑动',
-      desktop: '向下滚动',
-    } as const;
-
-    function detectDevice(): keyof typeof HINT_TEXT {
-      const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-      const isSmall  = window.matchMedia('(max-width: 768px)').matches;
-      if (isCoarse && isSmall) return 'mobile';
-      if (isCoarse) return 'tablet';
-      return 'desktop';
-    }
-
-    function applyHint() {
-      if (!hintText) return;
-      hintText.textContent = HINT_TEXT[detectDevice()];
-    }
-    applyHint();
-    let lastDevice = detectDevice();
-    window.addEventListener('resize', () => {
-      const d = detectDevice();
-      if (d !== lastDevice) {
-        lastDevice = d;
-        applyHint();
-      }
-    });
 
     // -- One-time page bounce on first paint ----------------------------
     if (!reduceMotion && !sessionStorage.getItem('cover-bounced')) {
@@ -141,17 +73,9 @@ const COVER_PORTRAIT = '/cover/cover-animated.webp';
       window.setTimeout(() => requestAnimationFrame(tick), 700);
     }
 
-    // -- Click hint → smooth-scroll past the cover ----------------------
-    if (hint) {
-      hint.addEventListener('click', () => {
-        const target = cover.getBoundingClientRect().bottom + window.scrollY;
-        window.scrollTo({ top: target, behavior: 'smooth' });
-      });
-    }
-
-    // -- Click anywhere on cover → also scrolls past -------------------
+    // -- Click anywhere on cover → smooth-scroll past -------------------
     cover.addEventListener('click', (e) => {
-      const inner = (e.target as HTMLElement).closest('[data-scroll-hint], a, button');
+      const inner = (e.target as HTMLElement).closest('a, button');
       if (inner) return;
       const bottom = cover.getBoundingClientRect().bottom + window.scrollY;
       window.scrollTo({ top: bottom, behavior: 'smooth' });
