@@ -11,34 +11,70 @@ const { at = 'cover' } = Astro.props;
   style="padding-top: env(safe-area-inset-top);"
 >
   <div class="container-plate">
-    <!-- Centered nav, no logo on the left -->
-    <nav class="h-14 md:h-16 flex items-center justify-center gap-8 md:gap-12 text-sm">
+    <nav class="h-14 md:h-16 flex items-center justify-center gap-10 md:gap-14 text-sm">
+
       <a
         href="/"
         class:list={[
-          'relative py-1 transition-colors duration-base',
-          at === 'cover' ? 'text-ink' : 'text-ink-soft hover:text-ink',
+          'nav-link',
+          at === 'cover' ? 'is-active' : '',
+          'text-ink-soft hover:text-ink',
         ]}
         aria-current={at === 'cover' ? 'page' : undefined}
       >
         记录
-        {at === 'cover' && (
-          <span class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style="background-color: var(--accent);"></span>
-        )}
       </a>
+
       <a
         href="/about/"
         class:list={[
-          'relative py-1 transition-colors duration-base',
-          at === 'colophon' ? 'text-ink' : 'text-ink-soft hover:text-ink',
+          'nav-link',
+          at === 'colophon' ? 'is-active' : '',
+          'text-ink-soft hover:text-ink',
         ]}
         aria-current={at === 'colophon' ? 'page' : undefined}
       >
         关于
-        {at === 'colophon' && (
-          <span class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style="background-color: var(--accent);"></span>
-        )}
       </a>
+
     </nav>
   </div>
 </header>
+
+<style is:global>
+  /* Editorial-style nav link.
+     Inactive: text muted, hover shows partial underline.
+     Active: text full ink, full underline (ink), slight weight increase. */
+  .nav-link {
+    position: relative;
+    padding: 4px 2px;
+    transition: color var(--dur-base) var(--ease-expo);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--dur-base) var(--ease-expo);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(0.4);
+  }
+  .nav-link.is-active {
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: 0.005em;
+  }
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+    background-color: var(--ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-link::after { transition: none; }
+  }
+</style>
