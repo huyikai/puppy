@@ -14,9 +14,9 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 >
   <Header slot="header" at="colophon" />
 
-  <article class="container-prose py-16 md:py-24">
+  <article class="container-prose py-20 md:py-32">
 
-    <!-- Title -->
+    <!-- 标题 -->
     <header class="reveal">
       <h1
         class="font-medium text-ink tracking-tight leading-[1.0]"
@@ -25,14 +25,12 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
         关于
       </h1>
       <p class="mt-6 text-base md:text-lg text-ink-soft leading-relaxed">
-        一只边牧，慢慢长大的样子。
+        白板的成长日记。
       </p>
     </header>
 
-    <hr class="hairline my-12 md:my-16" />
-
-    <!-- Portrait + subject metadata -->
-    <section class="reveal">
+    <!-- 头像 -->
+    <section class="reveal mt-20 md:mt-28">
       <figure class="plate overflow-hidden aspect-square">
         <img
           src={AVATAR_IMAGE.src}
@@ -45,8 +43,18 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
           loading="eager"
         />
       </figure>
+    </section>
 
-      <dl class="mt-10 space-y-5 text-sm">
+    <!-- 主人手记（暖） -->
+    <section class="reveal mt-20 md:mt-28">
+      <p class="text-xl md:text-2xl text-ink leading-relaxed tracking-tight">
+        每天给他拍拍照，看着他慢慢长大。
+      </p>
+    </section>
+
+    <!-- 事实（最简 dl） -->
+    <section class="reveal mt-20 md:mt-28">
+      <dl class="space-y-5 text-sm">
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
           <dt class="folio">名字</dt>
           <dd class="col-span-2 text-ink">白板</dd>
@@ -72,18 +80,6 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
           <dd class="col-span-2 text-ink tabular-nums">{homeLabel}</dd>
         </div>
       </dl>
-    </section>
-
-    <hr class="hairline my-12 md:my-16" />
-
-    <!-- 主人手记 (warmer tone) -->
-    <section class="reveal space-y-5 text-base md:text-lg text-ink-soft leading-relaxed">
-      <p>
-        他叫白板，是只边牧。2026 年 9 月 10 日出生，10 月 8 日来到我们家。
-      </p>
-      <p>
-        每天给他拍一张或几张照片，慢慢攒起来，就有了这本小册子。
-      </p>
     </section>
 
   </article>
