@@ -15,94 +15,92 @@ export interface Props {
   meta: DayData;
   photos: Array<PhotoMeta & { caption: string; cover: boolean }>;
   videos?: Array<VideoMeta & { caption: string }>;
-  /** 在时间线中显示前 N 张图；剩余进单日详情页（默认 6） */
-  previewLimit?: number;
-  /** 是否首页（影响布局密度） */
-  compact?: boolean;
 }
 
-const {
-  date,
-  meta,
-  photos,
-  videos = [],
-  previewLimit = 6,
-  compact = true,
-} = Astro.props;
+const { date, meta, photos, videos = [] } = Astro.props;
 
 const dayN = dayNumber(date);
-const visiblePhotos = photos.slice(0, previewLimit);
-const hiddenCount = photos.length - visiblePhotos.length;
 const dateLabel = formatChineseDate(date);
+// ISO 简版：YYYY.MM.DD
+const dateISO = date.replace(/-/g, '.');
 ---
 
-<section class="mb-14 md:mb-20" data-day-card data-date={date}>
-  <!-- 时间锚点 -->
-  <header class="mb-4 md:mb-6 flex items-baseline justify-between gap-3">
-    <div class="flex items-baseline gap-2.5">
-      <h2 class="font-serif text-xl md:text-2xl text-text-strong leading-none">
-        {dateLabel}
-      </h2>
+<article class="mb-24 md:mb-40" data-day-card data-date={date}>
+
+  <!-- Day 头部 -->
+  <header class="mb-10 md:mb-14 reveal">
+    <div class="flex items-center gap-3 mb-3 meta-label">
+      <span>{dateISO}</span>
+      <span class="text-line">/</span>
+      <span>Day {dayN}</span>
       {meta.mood && (
-        <span class="text-sm text-text-muted" aria-label="心情">
-          {moodToEmoji(meta.mood)}
-        </span>
+        <>
+          <span class="text-line">/</span>
+          <span class="flex items-center gap-1.5">
+            {moodToEmoji(meta.mood)} {meta.mood}
+          </span>
+        </>
       )}
     </div>
-    <a
-      href={`/day/${date}/`}
-      class="text-xs md:text-sm text-text-muted hover:text-accent transition-colors duration-base"
-    >
-      Day {dayN} ›
-    </a>
+    <h2 class="font-semibold text-3xl md:text-4xl text-ink leading-tight tracking-tight">
+      {meta.title || dateLabel}
+    </h2>
+    {meta.weather && (
+      <p class="mt-3 text-small text-ink-muted">
+        天气 · {meta.weather}
+      </p>
+    )}
   </header>
 
-  {meta.title && (
-    <p class="mb-3 text-sm md:text-base text-text-body font-serif italic">
-      「{meta.title}」
-    </p>
-  )}
+<!-- 照片流 -->
+      {photos.length > 0 && (
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {photos.map((p, i) => {
+            const isFirst = i === 0;
+            const forceEager = i < 2;
+            return (
+              <div
+                class:list={[
+                  isFirst ? 'md:col-span-2' : '',
+                  isFirst ? 'reveal' : 'reveal reveal-d-' + Math.min(i, 6),
+                ]}
+              >
+                <PhotoCard
+                  src={p.src}
+                  srcset={p.srcset}
+                  alt={`白板 · ${dateLabel} · 第${i + 1}张`}
+                  aspectRatio={p.aspectRatio}
+                  layout={isFirst ? 'full' : 'half'}
+                  onClick={true}
+                  index={i + 1}
+                  caption={p.caption || undefined}
+                  reveal={false}
+                  forceEager={forceEager}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
 
-  {meta.note && compact && (
-    <p class="mb-5 text-sm md:text-base text-text-body leading-relaxed max-w-prose line-clamp-3">
-      {meta.note}
-    </p>
-  )}
-
-  <!-- 照片网格 -->
-  {visiblePhotos.length > 0 && (
-    <div class="grid gap-1.5 md:gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      {visiblePhotos.map((p) => (
-        <PhotoCard
-          src={p.src}
-          srcset={p.srcset}
-          alt={p.caption || `白板 · ${dateLabel}`}
-          aspectRatio={p.aspectRatio}
-          caption={p.caption || undefined}
-          onClick="1"
-        />
-      ))}
-    </div>
-  )}
-
-  <!-- 视频区（始终显示当天全部视频） -->
+  <!-- 视频 -->
   {videos.length > 0 && (
-    <div class="mt-3 md:mt-4 grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2">
-      {videos.map((v) => (
-        <VideoCard videoSrc={v.video} posterSrc={v.poster} />
-      ))}
+    <div class="mt-12 md:mt-16">
+      <h3 class="meta-label mb-6">Videos</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {videos.map((v, i) => (
+          <div class="reveal reveal-d-2">
+            <VideoCard
+              videoSrc={v.video}
+              posterSrc={v.poster}
+              alt={`白板 · 视频 ${i + 1}`}
+              index={photos.length + i + 1}
+              reveal={false}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )}
 
-  <!-- 隐藏更多提示 -->
-  {hiddenCount > 0 && (
-    <div class="mt-4 text-center">
-      <a
-        href={`/day/${date}/`}
-        class="inline-flex items-center gap-1 text-xs md:text-sm text-text-muted hover:text-accent transition-colors duration-base"
-      >
-        查看剩余 {hiddenCount} 张 ›
-      </a>
-    </div>
-  )}
-</section>
+</article>

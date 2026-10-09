@@ -3,17 +3,15 @@ import '@/styles/global.css';
 
 export interface Props {
   title?: string;
-  image?: string; // og:image
+  image?: string;
   description?: string;
-  /** 当前是否在首页（影响 Header 显示「首页」链接 vs 隐藏） */
   isHome?: boolean;
 }
 
 const {
   title = '白板的成长日记',
   image = '/og-cover.jpg',
-  description = '记录我家边牧白板的成长点滴。',
-  isHome = false,
+  description = '一只边牧，慢慢长大的样子。',
 } = Astro.props;
 
 const fullTitle = title === '白板的成长日记' ? title : `${title} · 白板的成长日记`;
@@ -26,7 +24,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#FAF7F2" />
+    <meta name="theme-color" content="#FAF7F8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="白板" />
@@ -51,20 +49,69 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL(image, Astro.site).toString()} />
 
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
   </head>
   <body class="min-h-screen flex flex-col">
-    <slot name="header">
-      <!-- 默认 header，由具体页面提供以传入 isHome -->
-    </slot>
+
+    <slot name="header" />
 
     <main class="flex-1">
       <slot />
     </main>
 
     <slot name="footer" />
+
+    <!-- IntersectionObserver: 滚动入场动效 -->
+    <script>
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll('.reveal, .reveal-scale');
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0.08,
+            rootMargin: '0px 0px -5% 0px',
+          },
+        );
+        targets.forEach((el) => observer.observe(el));
+
+        // 兜底：2 秒后仍未入场的元素强制可见（防止截图工具或爬虫永远看不到）
+        setTimeout(() => {
+          document.querySelectorAll('.reveal:not(.is-visible), .reveal-scale:not(.is-visible)').forEach((el) => {
+            el.classList.add('is-visible');
+          });
+        }, 2000);
+      }
+
+      // Header 滚动时加阴影（让 sticky header 与背景分离更明显）
+      const header = document.querySelector('[data-header]');
+      if (header) {
+        const updateHeader = () => {
+          if (window.scrollY > 4) header.classList.add('scrolled');
+          else header.classList.remove('scrolled');
+        };
+        window.addEventListener('scroll', updateHeader, { passive: true });
+        updateHeader();
+      }
+    </script>
+
+    <style is:global>
+      [data-header].scrolled {
+        border-bottom: 1px solid var(--line);
+      }
+    </style>
+
   </body>
 </html>

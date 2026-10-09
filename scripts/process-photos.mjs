@@ -121,25 +121,45 @@ async function processVideo(srcPath, outDir, date, base, ext) {
   const videoOutPath = join(outDir, `${base}${ext}`);
   await copyFile(srcPath, videoOutPath);
 
-  // 用 ffmpeg 抽 1 秒处帧（取首帧可能全黑；取 1s 处更稳）
   const posterOutPath = join(outDir, `${base}-poster.jpg`);
+
+  // 1. 先用 ffprobe 拿视频时长
+  let duration = 0;
+  try {
+    const { stdout } = await execFileP('ffprobe', [
+      '-v', 'error',
+      '-show_entries', 'format=duration',
+      '-of', 'default=noprint_wrappers=1:nokey=1',
+      srcPath,
+    ], { timeout: 8000 });
+    duration = parseFloat(stdout.trim()) || 0;
+  } catch { /* ignore */ }
+
+  // 2. 取视频 50% 位置作为封面（避开开头黑帧；适合短片段）
+  const moment = duration > 0 ? Math.max(0.5, duration * 0.5) : 1;
+
   try {
     await execFileP('ffmpeg', [
       '-y',
-      '-ss', '1',
+      '-ss', String(moment),
       '-i', srcPath,
       '-frames:v', '1',
+      '-update', '1',
       '-q:v', '3',
+      '-vf', 'scale=-2:1600',
       posterOutPath,
     ], { timeout: 15000 });
   } catch (err) {
-    logErr(`视频 ${base}${ext} 抽 poster 失败：${err.message}，使用首帧兜底`);
+    logErr(`视频 ${base}${ext} 中点抽帧失败：${err.message}，兜底用 1s 处`);
     try {
       await execFileP('ffmpeg', [
         '-y',
+        '-ss', '1',
         '-i', srcPath,
         '-frames:v', '1',
+        '-update', '1',
         '-q:v', '3',
+        '-vf', 'scale=-2:1600',
         posterOutPath,
       ], { timeout: 15000 });
     } catch (err2) {

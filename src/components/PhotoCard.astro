@@ -3,57 +3,97 @@ export interface Props {
   src: string;
   srcset?: string;
   alt?: string;
-  /** 点击回调（打开 Lightbox）。若不传，则图片不可点 */
-  onClick?: string;
+  /** 完整宽（铺满）vs 等宽 2 列 */
+  layout?: 'full' | 'half';
+  /** 点击回调（打开 Lightbox） */
+  onClick?: boolean;
+  /** 自定义 caption；不传则用 alt */
+  caption?: string;
+  /** 文件编号（用于「第 N 张」显示） */
+  index?: number;
   /** 加载模式 */
   loading?: 'eager' | 'lazy';
   fetchpriority?: 'auto' | 'high' | 'low';
-  /** 宽高比例（用于占位高度，避免 CLS） */
+  /** 强制 eagar（避免 lazy 加载过慢导致截图空白） */
+  forceEager?: boolean;
   aspectRatio?: number;
-  /** 是否显示 caption 覆盖在底部 */
-  caption?: string;
-  /** 是否圆角图片（详情页用，关闭；时间线卡片图片本身是方形裁剪过） */
-  rounded?: boolean;
+  /** 是否带 reveal 入场动效 */
+  reveal?: boolean;
 }
 
 const {
   src,
   srcset,
   alt = '',
-  onClick,
+  layout = 'half',
+  onClick = false,
+  caption,
+  index,
   loading = 'lazy',
   fetchpriority = 'auto',
+  forceEager = false,
   aspectRatio = 1,
-  caption,
-  rounded = true,
+  reveal = false,
 } = Astro.props;
 
-const sizes = '(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw';
+const sizes =
+  layout === 'full'
+    ? '(min-width: 768px) 920px, 100vw'
+    : '(min-width: 768px) 540px, 50vw';
 ---
 
-<div class="relative overflow-hidden bg-bg-elevated group"
-     class:list={[rounded && 'rounded-md']}
-     style={`aspect-ratio: ${aspectRatio};`}
-     data-photo={onClick ? 'clickable' : undefined}
-     data-photo-src={onClick}
-     data-photo-srcset={srcset}
-     data-photo-alt={alt}
-     role={onClick ? 'button' : undefined}
-     tabindex={onClick ? 0 : undefined}>
-  <img
-    src={src}
-    srcset={srcset}
-    sizes={sizes}
-    alt={alt}
-    loading={loading}
-    fetchpriority={fetchpriority}
-    decoding="async"
-    class="absolute inset-0 w-full h-full object-cover transition-transform duration-slow ease-in-out-soft group-hover:scale-[1.02]"
-  />
+<figure
+  class:list={[reveal && 'reveal']}
+  class="group relative w-full"
+>
+  <div
+    class="relative overflow-hidden bg-bg-elevated"
+    style={`aspect-ratio: ${aspectRatio};`}
+    data-photo={onClick ? 'clickable' : undefined}
+    data-photo-src={onClick ? src : undefined}
+    data-photo-srcset={onClick ? srcset : undefined}
+    data-photo-alt={onClick ? alt : undefined}
+    data-photo-caption={onClick ? (caption || alt) : undefined}
+    role={onClick ? 'button' : undefined}
+    tabindex={onClick ? 0 : undefined}
+    aria-label={onClick ? `查看图片：${alt}` : undefined}
+  >
+    <img
+      src={src}
+      srcset={srcset}
+      sizes={sizes}
+      alt={alt}
+      loading={forceEager ? 'eager' : loading}
+      fetchpriority={forceEager ? 'high' : fetchpriority}
+      decoding="async"
+      class="absolute inset-0 w-full h-full object-cover
+             transition-transform duration-x-slow ease-expo
+             group-hover:scale-[1.035]
+             group-hover:saturate-[1.05]"
+    />
+    <!-- hover 时的细微暗角 -->
+    <div
+      class="absolute inset-0 pointer-events-none
+             bg-gradient-to-b from-black/0 via-transparent to-black/0
+             group-hover:from-black/0 group-hover:to-black/10
+             transition-opacity duration-base"
+    ></div>
+  </div>
 
-  {caption && (
-    <div class="absolute inset-x-0 bottom-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-base">
-      <p class="text-xs text-white line-clamp-2">{caption}</p>
-    </div>
+  {(caption || index !== undefined) && (
+    <figcaption
+      class="mt-3 flex items-baseline gap-3 meta-label"
+    >
+      {index !== undefined && (
+        <span class="text-ink-muted tabular-nums">
+          {String(index).padStart(2, '0')}
+        </span>
+      )}
+      {caption && (
+        <span class="text-ink-soft normal-case tracking-normal text-small font-normal">
+          {caption}
+        </span>
+      )}
+    </figcaption>
   )}
-</div>
+</figure>

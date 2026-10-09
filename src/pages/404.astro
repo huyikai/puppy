@@ -7,36 +7,35 @@ import Footer from '@/components/Footer.astro';
 <BaseLayout title="这页走丢了" description="找不到这页。">
   <Header slot="header" />
 
-  <section class="container-prose pt-24 md:pt-36 pb-32 text-center">
+  <section class="container-wide pt-32 md:pt-48 pb-32 text-center">
 
-    <div class="text-7xl md:text-8xl mb-6 animate-fade-in">🐾</div>
+    <div class="max-w-prose mx-auto reveal">
+      <p class="meta-label mb-8">404 · Page Not Found</p>
+      <h1 class="font-semibold text-5xl md:text-6xl text-ink leading-[1.05] tracking-tight">
+        这页走丢了
+      </h1>
+      <p class="mt-6 text-lg text-ink-soft leading-relaxed">
+        白板歪了歪头，也没找到这一页。<br />
+        可能链接错了，也可能这页从未存在。
+      </p>
 
-    <h1 class="font-serif text-3xl md:text-4xl text-text-strong mb-4 animate-fade-in-up">
-      这页走丢了
-    </h1>
-    <p class="text-base md:text-lg text-text-body leading-relaxed mb-10 animate-fade-in-up"
-       style="animation-delay: 80ms;">
-      白板歪了歪头，也没找到这一页。<br />
-      可能链接错了，也可能这页从未存在。
-    </p>
-
-    <div class="flex items-center justify-center gap-4 animate-fade-in-up"
-         style="animation-delay: 160ms;">
-      <a
-        href="/"
-        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-accent text-white text-sm font-medium hover:bg-warm transition-colors duration-base shadow-sm"
-      >
-        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        回家
-      </a>
-      <a
-        href="/about/"
-        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-bg-elevated border border-border-soft text-text-body text-sm hover:text-accent transition-colors duration-base"
-      >
-        关于白板
-      </a>
+      <div class="mt-12 flex items-center justify-center gap-3 flex-wrap">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-bg text-small font-medium hover:bg-ink-soft transition-colors duration-base"
+        >
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          回家
+        </a>
+        <a
+          href="/about/"
+          class="inline-flex items-center gap-2 px-5 py-2.5 border border-line text-ink text-small transition-colors duration-base hover:border-ink"
+        >
+          关于白板
+        </a>
+      </div>
     </div>
 
   </section>

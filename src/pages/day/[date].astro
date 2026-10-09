@@ -15,6 +15,7 @@ import {
   formatChineseDate,
   dayNumber,
   moodToEmoji,
+  ageOnDate,
 } from '@/lib/days';
 
 export async function getStaticPaths() {
@@ -25,9 +26,7 @@ export async function getStaticPaths() {
 const { date } = Astro.params;
 const entry = await getDay(date!);
 
-if (!entry) {
-  return Astro.redirect('/404/');
-}
+if (!entry) return Astro.redirect('/404/');
 
 const manifest = await getManifest(date!);
 const photos = resolvePhotos(entry.data.photos, manifest);
@@ -35,6 +34,7 @@ const videos = resolveVideos(entry.data.videos, manifest);
 
 const dayN = dayNumber(date!);
 const dateLabel = formatChineseDate(date!);
+const ageDays = ageOnDate(date!);
 const allDays = await getAllDays();
 const idx = allDays.findIndex((d) => d.data.date === date);
 const prevDay = idx < allDays.length - 1 ? allDays[idx + 1] : null;
@@ -43,100 +43,109 @@ const nextDay = idx > 0 ? allDays[idx - 1] : null;
 
 <BaseLayout
   title={`${dateLabel} · Day ${dayN}`}
-  description={entry.data.note || `${dateLabel} · 白板记录`}
+  description={`白板出生 ${ageDays} 天的记录`}
 >
   <Header slot="header" current={`${dateLabel} · Day ${dayN}`} />
 
-  <article class="container-prose pt-8 md:pt-12 pb-16">
+  <article class="container-wide pt-12 md:pt-20 pb-20">
 
     <!-- 返回 -->
-    <div class="mb-6">
-      <a href="/" class="btn-link">
-        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+    <div class="mb-10 reveal">
+      <a
+        href="/"
+        class="link-underline text-small text-ink-soft hover:text-ink inline-flex items-center gap-1.5"
+      >
+        <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        返回时间线
+        回到时间线
       </a>
     </div>
 
     <!-- 头部 -->
-    <header class="mb-8 md:mb-12">
-      <div class="flex items-center gap-3 mb-3">
-        <span class="text-xs uppercase tracking-[0.2em] text-text-muted">
-          Day {dayN}
-        </span>
+    <header class="mb-12 md:mb-16 max-w-[920px] mx-auto reveal">
+      <div class="flex items-center gap-3 mb-3 meta-label">
+        <span>{date!.replace(/-/g, '.')}</span>
+        <span class="text-line">/</span>
+        <span>Day {dayN}</span>
+        <span class="text-line">/</span>
+        <span>出生 {ageDays} 天</span>
         {entry.data.mood && (
-          <span class="text-sm text-text-muted" aria-label="心情">
-            {moodToEmoji(entry.data.mood)}
-          </span>
+          <>
+            <span class="text-line">/</span>
+            <span class="flex items-center gap-1.5">
+              {moodToEmoji(entry.data.mood)} {entry.data.mood}
+            </span>
+          </>
         )}
       </div>
-      <h1 class="font-serif text-3xl md:text-4xl text-text-strong">
-        {dateLabel}
+      <h1 class="font-semibold text-4xl md:text-5xl text-ink leading-tight tracking-tight">
+        {entry.data.title || dateLabel}
       </h1>
-      {entry.data.title && (
-        <p class="mt-2 font-serif italic text-lg md:text-xl text-text-body">
-          「{entry.data.title}」
-        </p>
-      )}
       {entry.data.weather && (
-        <p class="mt-3 text-xs text-text-muted tracking-wide">
-          天气 · {entry.data.weather}
-        </p>
+        <p class="mt-4 text-small text-ink-muted">天气 · {entry.data.weather}</p>
       )}
     </header>
 
-    <!-- note -->
-    {entry.data.note && (
-      <div class="mb-10 md:mb-14 text-base md:text-lg text-text-body leading-relaxed whitespace-pre-line font-serif">
-        {entry.data.note}
-      </div>
-    )}
-
-    <!-- 大图网格 -->
+    <!-- 照片流 -->
     {photos.length > 0 && (
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-10 md:mb-14">
-        {photos.map((p) => (
-          <figure>
-            <PhotoCard
-              src={p.src}
-              srcset={p.srcset}
-              alt={p.caption || `白板 · ${dateLabel}`}
-              aspectRatio={p.aspectRatio}
-              onClick="1"
-              rounded={true}
-            />
-            {p.caption && (
-              <figcaption class="mt-2 px-1 text-xs md:text-sm text-text-muted">
-                {p.caption}
-              </figcaption>
-            )}
-          </figure>
-        ))}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-[920px] mx-auto">
+        {photos.map((p, i) => {
+          const isFirst = i === 0;
+          const forceEager = i < 2;
+          return (
+            <div
+              class:list={[
+                isFirst ? 'md:col-span-2' : '',
+                isFirst ? 'reveal' : 'reveal reveal-d-' + Math.min(i, 6),
+              ]}
+            >
+              <PhotoCard
+                src={p.src}
+                srcset={p.srcset}
+                alt={`白板 · ${dateLabel} · 第${i + 1}张`}
+                aspectRatio={p.aspectRatio}
+                layout={isFirst ? 'full' : 'half'}
+                onClick={true}
+                index={i + 1}
+                caption={p.caption || undefined}
+                reveal={false}
+                forceEager={forceEager}
+              />
+            </div>
+          );
+        })}
       </div>
     )}
 
-    <!-- 视频区 -->
+    <!-- 视频 -->
     {videos.length > 0 && (
-      <div class="mb-10 md:mb-14">
-        <h2 class="font-serif text-xl md:text-2xl text-text-strong mb-4">视频</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
-          {videos.map((v) => (
-            <VideoCard videoSrc={v.video} posterSrc={v.poster} large={true} />
+      <section class="mt-16 md:mt-20 max-w-[920px] mx-auto">
+        <h2 class="meta-label mb-6 reveal">Videos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {videos.map((v, i) => (
+            <div class="reveal reveal-d-2">
+              <VideoCard
+                videoSrc={v.video}
+                posterSrc={v.poster}
+                alt={`白板 · 视频 ${i + 1}`}
+                index={photos.length + i + 1}
+                reveal={false}
+              />
+            </div>
           ))}
         </div>
-      </div>
+      </section>
     )}
 
     <!-- 上下日导航 -->
-    <nav class="mt-12 pt-8 border-t border-border-soft flex items-center justify-between text-sm">
+    <nav class="mt-24 md:mt-32 pt-8 border-t border-line flex items-center justify-between reveal">
       {prevDay ? (
         <a
           href={`/day/${prevDay.data.date}/`}
-          class="btn-link"
-          aria-label={`上一段 ${formatChineseDate(prevDay.data.date)}`}
+          class="link-underline text-small text-ink-soft hover:text-ink inline-flex items-center gap-2"
         >
-          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
           {formatChineseDate(prevDay.data.date)}
@@ -146,11 +155,10 @@ const nextDay = idx > 0 ? allDays[idx - 1] : null;
       {nextDay ? (
         <a
           href={`/day/${nextDay.data.date}/`}
-          class="btn-link"
-          aria-label={`下一段 ${formatChineseDate(nextDay.data.date)}`}
+          class="link-underline text-small text-ink-soft hover:text-ink inline-flex items-center gap-2"
         >
           {formatChineseDate(nextDay.data.date)}
-          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </a>

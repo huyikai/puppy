@@ -3,68 +3,149 @@ export interface Props {
   videoSrc: string;
   posterSrc?: string | null;
   alt?: string;
-  /** 是否大尺寸（详情页用） */
-  large?: boolean;
+  caption?: string;
+  index?: number;
+  /** 是否带 reveal 入场动效 */
+  reveal?: boolean;
 }
 
-const { videoSrc, posterSrc, alt = '', large = false } = Astro.props;
+const { videoSrc, posterSrc, alt = '', caption, index, reveal = false } = Astro.props;
 ---
 
-<figure class={`relative overflow-hidden rounded-md bg-bg-elevated ${large ? 'aspect-video' : 'aspect-video'}`}
-        data-video-card>
-  <!-- Poster（点击前显示） -->
-  {posterSrc && (
-    <img
-      src={posterSrc}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      class="absolute inset-0 w-full h-full object-cover"
-      data-video-poster
-    />
+<figure
+  class:list={[reveal && 'reveal']}
+  class="group"
+>
+  <div
+    class="relative overflow-hidden bg-ink/5"
+    style="aspect-ratio: 4 / 5;"
+    data-video-card
+    data-video-src={videoSrc}
+    data-video-poster={posterSrc}
+  >
+    <!-- Poster 图（点击前 + hover 时显示） -->
+    {posterSrc && (
+      <img
+        src={posterSrc}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-0 w-full h-full object-cover
+               transition-all duration-x-slow ease-expo
+               group-hover:scale-[1.03] group-hover:saturate-[1.05]"
+        data-video-poster
+      />
+    )}
+
+    <!-- 实际视频（仅 hover 时加载静音预览，点击全屏播放） -->
+    <video
+      src={videoSrc}
+      poster={posterSrc || undefined}
+      preload="none"
+      playsinline
+      muted
+      loop
+      class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-base"
+      data-video-preview
+    ></video>
+
+    <!-- 顶部「VIDEO」标识 -->
+    <div
+      class="absolute top-3 left-3 z-10 meta-label text-white
+             bg-black/30 backdrop-blur-sm px-2 py-1
+             opacity-0 group-hover:opacity-100 transition-opacity duration-base"
+    >
+      Video
+    </div>
+
+    <!-- 时长（暂留接口，未来从 manifest 拿） -->
+    <!-- 播放按钮（中央） -->
+    <button
+      type="button"
+      class="absolute inset-0 z-10 flex items-center justify-center"
+      aria-label="播放视频"
+      data-video-play
+    >
+      <span
+        class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/95
+               flex items-center justify-center
+               transition-all duration-base ease-expo
+               group-hover:scale-110 group-hover:bg-white
+               shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          class="w-6 h-6 md:w-7 md:h-7 text-ink ml-1"
+          fill="currentColor"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  {(caption || index !== undefined) && (
+    <figcaption class="mt-3 flex items-baseline gap-3 meta-label">
+      {index !== undefined && (
+        <span class="text-ink-muted tabular-nums">
+          {String(index).padStart(2, '0')}
+        </span>
+      )}
+      {caption && (
+        <span class="text-ink-soft normal-case tracking-normal text-small font-normal">
+          {caption}
+        </span>
+      )}
+    </figcaption>
   )}
-
-  <!-- 视频元素（懒挂载） -->
-  <video
-    src={videoSrc}
-    poster={posterSrc || undefined}
-    preload="none"
-    playsinline
-    controls
-    class="absolute inset-0 w-full h-full object-cover bg-bg-base hidden"
-    data-video
-  >
-    您的浏览器不支持 video 标签。
-  </video>
-
-  <!-- 播放按钮 -->
-  <button
-    type="button"
-    class="absolute inset-0 z-10 flex items-center justify-center group"
-    aria-label="播放视频"
-    data-video-play
-  >
-    <span class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-base ease-out-soft group-hover:scale-110 group-hover:bg-white">
-      <svg viewBox="0 0 24 24" class="w-6 h-6 md:w-8 md:h-8 text-text-strong ml-1" fill="currentColor">
-        <path d="M8 5v14l11-7z" />
-      </svg>
-    </span>
-  </button>
 </figure>
 
 <script>
   document.querySelectorAll('[data-video-card]').forEach((card) => {
     const playBtn = card.querySelector('[data-video-play]') as HTMLButtonElement | null;
-    const video = card.querySelector('[data-video]') as HTMLVideoElement | null;
     const poster = card.querySelector('[data-video-poster]') as HTMLImageElement | null;
-    if (!playBtn || !video) return;
+    const preview = card.querySelector('[data-video-preview]') as HTMLVideoElement | null;
+    if (!playBtn || !preview) return;
 
+    // hover 进入：开始静音预览
+    let hoverTimer: number | undefined;
+    card.addEventListener('mouseenter', () => {
+      hoverTimer = window.setTimeout(() => {
+        preview.play().catch(() => {});
+      }, 250);
+    });
+    card.addEventListener('mouseleave', () => {
+      if (hoverTimer) clearTimeout(hoverTimer);
+      preview.pause();
+      preview.currentTime = 0;
+      poster?.classList.remove('opacity-0');
+      preview.classList.add('opacity-0');
+    });
+
+    // 触摸设备也支持 hover 行为（pointerenter 触发）
+    card.addEventListener('pointerenter', () => {
+      preview.play().catch(() => {});
+    });
+    card.addEventListener('pointerleave', () => {
+      preview.pause();
+      preview.currentTime = 0;
+      poster?.classList.remove('opacity-0');
+      preview.classList.add('opacity-0');
+    });
+
+    // 点击：进入全屏 + 解禁声音
     playBtn.addEventListener('click', () => {
-      poster?.classList.add('hidden');
-      playBtn.classList.add('hidden');
-      video.classList.remove('hidden');
-      video.controls = true;
-      video.play().catch(() => {});
+      preview.muted = false;
+      preview.controls = true;
+      preview.classList.remove('opacity-0');
+      poster?.classList.add('opacity-0');
+      preview.play().catch(() => {});
+      // 请求全屏
+      const v = preview as HTMLVideoElement & {
+        webkitEnterFullscreen?: () => void;
+      };
+      if (v.requestFullscreen) v.requestFullscreen();
+      else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
     });
   });
 </script>

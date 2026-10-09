@@ -11,12 +11,11 @@ import {
   getManifest,
   resolvePhotos,
   resolveVideos,
-  daysSinceHomecoming,
+  daysOld,
 } from '@/lib/days';
 
 const days = await getAllDays();
 
-// 解析每天的 manifest
 const daysData = await Promise.all(
   days.map(async (entry) => {
     const manifest = await getManifest(entry.data.date);
@@ -26,7 +25,7 @@ const daysData = await Promise.all(
   }),
 );
 
-const daysAlive = daysSinceHomecoming();
+const daysAlive = daysOld();
 ---
 
 <BaseLayout isHome={true}>
@@ -34,30 +33,37 @@ const daysAlive = daysSinceHomecoming();
 
   <Hero />
 
-  <div class="container-content py-12 md:py-20">
-    <div class="mb-10 md:mb-14 text-center max-w-prose mx-auto animate-fade-in-up">
-      <p class="text-xs md:text-sm uppercase tracking-[0.25em] text-text-muted">
-        Day {daysAlive} · 一日一记
+  <!-- Intro 文案（极简） -->
+  <section class="container-wide py-16 md:py-24">
+    <div class="max-w-prose reveal">
+      <p class="meta-label mb-6">Index</p>
+      <p class="text-lg md:text-xl text-ink leading-relaxed">
+        这是我家边牧白板的成长日记。<br />
+        从 2026.10.08 到家那天起，一日一记。
       </p>
-      <p class="mt-3 font-serif text-base md:text-xl text-text-body leading-relaxed">
-        这是我家边牧白板的成长日记。<br class="hidden md:block" />
-        从到家第一天起，慢慢地，把他的样子记下来。
+      <p class="mt-3 text-small text-ink-muted">
+        截至今天，他已经出生 <span class="text-ink tabular-nums">{daysAlive}</span> 天。
       </p>
     </div>
+  </section>
 
+  <!-- 时间线 -->
+  <section class="container-wide pb-16">
     {daysData.length === 0 ? (
-      <p class="text-center text-text-muted">还没有任何记录。</p>
+      <p class="text-center text-ink-muted">还没有任何记录。</p>
     ) : (
-      daysData.map(({ entry, photos, videos }) => (
-        <DayCard
-          date={entry.data.date}
-          meta={entry.data}
-          photos={photos}
-          videos={videos}
-        />
-      ))
+      <div class="max-w-[920px] mx-auto">
+        {daysData.map(({ entry, photos, videos }) => (
+          <DayCard
+            date={entry.data.date}
+            meta={entry.data}
+            photos={photos}
+            videos={videos}
+          />
+        ))}
+      </div>
     )}
-  </div>
+  </section>
 
   <Footer slot="footer" />
   <Lightbox />

@@ -1,48 +1,54 @@
 ---
 export interface Props {
-  /** 是否在首页（首页上不显示「首页」链接） */
   isHome?: boolean;
-  /** 当前页面文字（用于副标） */
   current?: string;
 }
 
 const { isHome = false, current } = Astro.props;
 ---
 
-<header class="sticky top-0 z-40 backdrop-blur-md bg-bg-base/80 border-b border-border-soft"
-        style="padding-top: env(safe-area-inset-top);">
-  <div class="container-content h-16 md:h-[72px] flex items-center justify-between gap-4">
+<header
+  class="sticky top-0 z-40 bg-bg/85 backdrop-blur-md"
+  style="padding-top: env(safe-area-inset-top);"
+  data-header
+>
+  <div class="container-wide h-14 md:h-16 flex items-center justify-between gap-4">
+
     <a
       href="/"
-      class="font-serif text-lg md:text-xl text-text-strong hover:text-accent transition-colors duration-base"
-      aria-label="返回首页"
+      class="font-semibold text-base md:text-lg text-ink tracking-tight"
+      data-header-home-link
     >
-      白板的成长日记
+      白板
+      <span class="text-ink-muted font-normal hidden sm:inline">
+        · 白板的成长日记
+      </span>
     </a>
 
-    <nav class="flex items-center gap-4 md:gap-6">
+    <nav class="flex items-center gap-5 md:gap-7">
       {!isHome && (
         <a
           href="/"
-          class="text-sm text-text-muted hover:text-accent transition-colors duration-base"
+          class="text-sm text-ink-soft hover:text-ink transition-colors duration-base"
         >
           首页
         </a>
       )}
       <a
         href="/about/"
-        class="text-sm text-text-body hover:text-accent transition-colors duration-base"
+        class="text-sm text-ink-soft hover:text-ink transition-colors duration-base"
       >
         关于
       </a>
     </nav>
-  </div>
-</header>
 
-{current && (
-  <div class="border-b border-border-soft/50 bg-bg-base/60 backdrop-blur-sm">
-    <div class="container-content h-10 flex items-center">
-      <span class="text-xs text-text-muted">{current}</span>
-    </div>
   </div>
-)}
+
+  {current && (
+    <div class="border-t border-line">
+      <div class="container-wide h-10 flex items-center">
+        <span class="meta-label">{current}</span>
+      </div>
+    </div>
+  )}
+</header>

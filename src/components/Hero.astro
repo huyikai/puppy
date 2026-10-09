@@ -5,8 +5,8 @@ const days = daysSinceHomecoming();
 ---
 
 <section
-  class="relative w-full overflow-hidden"
-  style="height: 70vh; min-height: 480px;"
+  class="relative w-full overflow-hidden isolate"
+  style="height: 78vh; min-height: 520px;"
   data-hero
 >
   <!-- 背景图（视差层） -->
@@ -19,26 +19,31 @@ const days = daysSinceHomecoming();
       srcset={HERO_IMAGE.srcset}
       sizes={HERO_IMAGE.sizes}
       alt={HERO_IMAGE.alt}
-      class="w-full h-full object-cover object-center"
+      class="w-full h-full object-cover object-center animate-fade-in"
+      style="animation-duration: 1200ms;"
       loading="eager"
       fetchpriority="high"
     />
-    <!-- 底部暖色渐变，让白字在浅色图片上更可读 -->
-    <div class="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/30"></div>
+    <!-- 暖色渐变让白字在浅色图片上更可读 -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/0 via-black/15 to-black/55"></div>
   </div>
 
   <!-- 文字内容 -->
-  <div class="absolute inset-x-0 bottom-0 z-10 pb-12 md:pb-16">
-    <div class="container-content text-white">
-      <p class="text-xs md:text-sm uppercase tracking-[0.2em] text-white/80 mb-3 animate-fade-in-up">
-        Border Collie · {days >= 1 ? `Day ${days}` : ''}
+  <div class="absolute inset-x-0 bottom-0 z-10 pb-10 md:pb-14">
+    <div class="container-wide text-white">
+      <p class="meta-label text-white/85 mb-3 animate-fade-in-up">
+        Border Collie · Day {days}
       </p>
-      <h1 class="font-serif text-3xl md:text-4xl lg:text-5xl font-medium leading-[1.15] drop-shadow-sm animate-fade-in-up"
-          style="animation-delay: 80ms;">
+      <h1
+        class="font-semibold text-4xl md:text-5xl lg:text-6xl leading-[1.05] drop-shadow animate-fade-in-up"
+        style="animation-delay: 100ms;"
+      >
         白板的成长日记
       </h1>
-      <p class="mt-3 md:mt-4 text-sm md:text-base text-white/85 max-w-md animate-fade-in-up"
-         style="animation-delay: 160ms;">
+      <p
+        class="mt-3 md:mt-5 text-base md:text-lg text-white/85 max-w-md leading-relaxed animate-fade-in-up"
+        style="animation-delay: 220ms;"
+      >
         一只边牧，慢慢长大的样子。
       </p>
     </div>
@@ -46,7 +51,7 @@ const days = daysSinceHomecoming();
 </section>
 
 <script>
-  // 简易视差：滚动时背景图轻微上移
+  // Hero 视差 — 幅度加大
   const heroes = document.querySelectorAll('[data-hero]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -54,22 +59,21 @@ const days = daysSinceHomecoming();
     let ticking = false;
 
     function update() {
-      heroes.forEach((hero) => {
-        const bg = hero.querySelector('[data-hero-bg]') as HTMLElement | null;
-        if (!bg) return;
-        const rect = hero.getBoundingClientRect();
-        const vh = window.innerHeight;
-        // 当 hero 在视口内时计算偏移
-        if (rect.bottom > 0 && rect.top < vh) {
-          // 进度 0~1：完全滚出时为 -1，刚刚滚入时为 1
-          const progress = (rect.top - vh * 0.5) / (vh * 0.5);
-          // 上限 ±40px
-          const translate = Math.max(-40, Math.min(40, -progress * 40));
-          bg.style.transform = `translate3d(0, ${translate}px, 0) scale(1.08)`;
-        }
-      });
-      ticking = false;
-    }
+        heroes.forEach((hero) => {
+          const bg = hero.querySelector('[data-hero-bg]') as HTMLElement | null;
+          if (!bg) return;
+          const rect = hero.getBoundingClientRect();
+          const vh = window.innerHeight;
+          if (rect.bottom > 0 && rect.top < vh) {
+            // 进度 -1..1
+            const progress = (rect.top - vh * 0.5) / (vh * 0.5);
+            // 上限 ±80px（比之前 40 大一倍）
+            const translate = Math.max(-80, Math.min(80, -progress * 80));
+            bg.style.transform = `translate3d(0, ${translate}px, 0) scale(1.12)`;
+          }
+        });
+        ticking = false;
+      }
 
     window.addEventListener(
       'scroll',
@@ -82,7 +86,6 @@ const days = daysSinceHomecoming();
       { passive: true },
     );
 
-    // 初始执行一次
     update();
   }
 </script>

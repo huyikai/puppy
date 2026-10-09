@@ -15,105 +15,114 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 >
   <Header slot="header" current="关于" />
 
-  <article class="container-prose pt-8 md:pt-16 pb-16">
+  <article class="container-wide pt-12 md:pt-20 pb-20">
 
-    <header class="mb-12 md:mb-16">
-      <p class="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">
-        About
-      </p>
-      <h1 class="font-serif text-3xl md:text-4xl text-text-strong">
+    <!-- 标题 -->
+    <header class="max-w-[920px] mx-auto mb-16 md:mb-24 reveal">
+      <p class="meta-label mb-6">Colophon</p>
+      <h1 class="font-semibold text-5xl md:text-6xl text-ink leading-[1.05] tracking-tight">
         关于白板
       </h1>
+      <p class="mt-6 text-lg md:text-xl text-ink-soft leading-relaxed max-w-prose">
+        边境牧羊犬。黑白。男孩。<br />
+        2026 年 9 月 10 日出生，10 月 8 日来到我家。
+      </p>
     </header>
 
-    <!-- 头像 + 基础信息 -->
-    <section class="flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-12 md:mb-16">
-      <div class="shrink-0 mx-auto md:mx-0">
+    <!-- 主体：左大图 + 右元数据（杂志式编辑页） -->
+    <section class="max-w-[920px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 mb-20 md:mb-28">
+
+      <!-- 大头像 -->
+      <div class="md:col-span-7 reveal">
         <img
           src={AVATAR_IMAGE.src}
           srcset={AVATAR_IMAGE.srcset}
           sizes={AVATAR_IMAGE.sizes}
           alt={AVATAR_IMAGE.alt}
-          width="240"
-          height="240"
-          class="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover shadow-md ring-4 ring-bg-elevated"
+          width="800"
+          height="800"
+          class="w-full h-auto"
           loading="eager"
         />
       </div>
 
-      <div class="flex-1">
-        <h2 class="font-serif text-2xl md:text-3xl text-text-strong leading-tight">
-          白板
-          <span class="ml-2 text-base md:text-lg text-text-muted font-sans">Bai Ban</span>
-        </h2>
-
-        <dl class="mt-5 space-y-2 text-sm md:text-base text-text-body">
-          <div class="flex gap-3">
-            <dt class="w-16 shrink-0 text-text-muted">品种</dt>
-            <dd>边牧（Border Collie）</dd>
+      <!-- 元数据列 -->
+      <aside class="md:col-span-5 reveal reveal-d-2">
+        <dl class="space-y-5 text-base">
+          <div>
+            <dt class="meta-label mb-1">品种</dt>
+            <dd class="text-ink">Border Collie</dd>
           </div>
-          <div class="flex gap-3">
-            <dt class="w-16 shrink-0 text-text-muted">性别</dt>
-            <dd>公</dd>
+          <div>
+            <dt class="meta-label mb-1">性别</dt>
+            <dd class="text-ink">公</dd>
           </div>
-          <div class="flex gap-3">
-            <dt class="w-16 shrink-0 text-text-muted">毛色</dt>
-            <dd>黑白</dd>
+          <div>
+            <dt class="meta-label mb-1">毛色</dt>
+            <dd class="text-ink">黑白</dd>
           </div>
-          <div class="flex gap-3">
-            <dt class="w-16 shrink-0 text-text-muted">生日</dt>
-            <dd>{birthdayLabel}</dd>
+          <div>
+            <dt class="meta-label mb-1">生日</dt>
+            <dd class="text-ink tabular-nums">{birthdayLabel}</dd>
           </div>
-          <div class="flex gap-3">
-            <dt class="w-16 shrink-0 text-text-muted">到家</dt>
-            <dd>{homeLabel}</dd>
+          <div>
+            <dt class="meta-label mb-1">到家</dt>
+            <dd class="text-ink tabular-nums">{homeLabel}</dd>
           </div>
-          <div class="flex gap-3 items-baseline pt-3 mt-3 border-t border-border-soft/60">
-            <dt class="w-16 shrink-0 text-text-muted">现在</dt>
-            <dd>
-              <span class="font-serif text-2xl md:text-3xl text-accent">{days}</span>
-              <span class="ml-1 text-base text-text-body">天大了</span>
+          <div class="pt-6 mt-6 border-t border-line">
+            <dt class="meta-label mb-3">Today</dt>
+            <dd class="text-ink">
+              <span class="font-semibold text-4xl md:text-5xl tabular-nums tracking-tight">
+                {days}
+              </span>
+              <span class="text-ink-muted text-base ml-2">天大了</span>
             </dd>
           </div>
         </dl>
-      </div>
+      </aside>
     </section>
 
-    <hr class="my-10 md:my-14 border-border-soft" />
-
-    <!-- 关于这个站点 -->
-    <section class="mb-12">
-      <h2 class="font-serif text-xl md:text-2xl text-text-strong mb-4">
-        关于这个站点
+    <!-- 叙述 -->
+    <section class="max-w-prose mx-auto space-y-8 reveal">
+      <h2 class="font-semibold text-2xl md:text-3xl text-ink tracking-tight">
+        这个站点
       </h2>
-      <div class="space-y-4 text-text-body leading-relaxed">
+      <div class="space-y-5 text-base md:text-lg text-ink-soft leading-relaxed">
         <p>
           这是我家边牧白板的成长日记。一个只为他一个人开的小角落。
         </p>
         <p>
-          不想发朋友圈，也不想在社交媒体上表演养狗。
-          这里只是把每天的样子记下来——他今天吃了什么、玩了什么、有什么新的表情。
+          不想发朋友圈，也不想在社交媒体上表演养狗。这里只是把每天的样子记下来——他今天吃了什么、玩了什么、有什么新的表情。
         </p>
-        <p class="text-sm text-text-muted">
-          由主人用 Astro + Tailwind 手工搭建，
-          <a href="/" class="text-accent hover:underline">时间线</a> 上每张照片都可以点开看大图。
+        <p>
+          站点用 Astro + Tailwind 手工搭建。每次新增素材丢进当日文件夹，推送到 GitHub，Vercel 自动部署上线。
         </p>
       </div>
     </section>
 
-    <hr class="my-10 md:my-14 border-border-soft" />
-
-    <!-- 性格简评（占位，未来可拓展） -->
-    <section class="mb-12">
-      <h2 class="font-serif text-xl md:text-2xl text-text-strong mb-4">
+    <!-- 性格 -->
+    <section class="max-w-prose mx-auto mt-20 md:mt-28 reveal">
+      <h2 class="font-semibold text-2xl md:text-3xl text-ink mb-8 tracking-tight">
         小名 & 性格
       </h2>
-      <ul class="space-y-2 text-text-body">
-        <li>· 小名：白板（黑白相间，名副其实）</li>
-        <li>· 性格：好奇、有点怂、爱黏人</li>
-        <li>· 喜欢：羊奶粉泡的狗粮、熊椅、被人摸头</li>
-        <li>· 讨厌：被关在笼子里出不来（暂时）</li>
-      </ul>
+      <dl class="space-y-6 text-base md:text-lg text-ink-soft leading-relaxed">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6">
+          <dt class="meta-label">小名</dt>
+          <dd class="md:col-span-3">白板（黑白相间，名副其实）</dd>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6">
+          <dt class="meta-label">性格</dt>
+          <dd class="md:col-span-3">好奇、有点怂、爱黏人</dd>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6">
+          <dt class="meta-label">喜欢</dt>
+          <dd class="md:col-span-3">羊奶粉泡的狗粮、熊椅、被人摸头</dd>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-6">
+          <dt class="meta-label">讨厌</dt>
+          <dd class="md:col-span-3">被关在笼子里出不来（暂时）</dd>
+        </div>
+      </dl>
     </section>
 
   </article>
