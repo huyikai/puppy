@@ -8,14 +8,12 @@ const daysHome = daysSinceHomecoming();
 {/*
   Cover page. Title page of the photo book.
   Centered composition: small portrait + large title + small metadata.
-  Avoids the LLM default of full-bleed photo with overlay text.
 */}
 <section class="min-h-screen flex items-center justify-center relative">
   <div class="container-content w-full max-w-3xl">
 
     <div class="flex flex-col items-center text-center reveal">
 
-      <!-- Cover portrait (modest size, not full-bleed) -->
       <div class="reveal-scale">
         <img
           src={AVATAR_IMAGE.src}
@@ -29,7 +27,6 @@ const daysHome = daysSinceHomecoming();
         />
       </div>
 
-      <!-- Title block -->
       <h1
         class="mt-12 md:mt-16 font-medium text-ink tracking-tight leading-[1.05]"
         style="font-size: clamp(3rem, 9vw, 6rem);"
@@ -41,27 +38,10 @@ const daysHome = daysSinceHomecoming();
         白板，{daysAlive} 天大。
       </p>
 
-      <!-- Edition + birth metadata (sparse, sparse) -->
-      <div class="mt-10 md:mt-14 flex flex-col items-center gap-2">
-        <p class="folio" style="color: var(--accent);">
-          版本 001
-        </p>
-        <hr class="hairline w-12" />
-        <dl class="mt-2 text-sm text-ink-muted space-y-1 tabular-nums">
-          <div>
-            <dt class="sr-only">Born</dt>
-            <dd>Born 2026.09.10</dd>
-          </div>
-          <div>
-            <dt class="sr-only">Home</dt>
-            <dd>Home 2026.10.08</dd>
-          </div>
-          <div>
-            <dt class="sr-only">Days alive</dt>
-            <dd>{daysAlive} 天大了</dd>
-          </div>
-        </dl>
-      </div>
+      <!-- One line of metadata: birthday + homecoming -->
+      <p class="mt-10 md:mt-14 text-sm text-ink-muted tabular-nums leading-relaxed">
+        2026 年 9 月 10 日出生 · 10 月 8 日到家
+      </p>
 
     </div>
 

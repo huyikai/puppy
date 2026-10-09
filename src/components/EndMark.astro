@@ -12,12 +12,12 @@ const year = new Date().getFullYear();
 
     <div class="py-20 md:py-28 flex flex-col items-center text-center gap-8 md:gap-10 reveal">
 
-      <!-- The "end of edition" mark -->
+      <!-- Personal mark (replaces "版本结束") -->
       <p class="folio" style="color: var(--accent); letter-spacing: 0.24em;">
-        版本结束
+        —— 白板 ——
       </p>
 
-      <!-- Big serif-free countdown -->
+      <!-- The number -->
       <p
         class="font-medium leading-none tracking-tight tabular-nums"
         style="font-size: clamp(7rem, 18vw, 13rem);"
@@ -25,11 +25,13 @@ const year = new Date().getFullYear();
         {days}
       </p>
 
-      <p class="text-base text-ink-soft max-w-sm">
-        白板出生了 {days} 天。
+      <!-- A memo line (replaces "白板出生了 29 天。") -->
+      <p class="text-base text-ink-soft max-w-sm leading-relaxed">
+        今天是白板到家的第 {days} 天。<br />
+        他每天都在长大一点点。
       </p>
 
-      <p class="mt-16 folio">
+      <p class="mt-10 folio">
         © {year} 白板的成长日记
       </p>
 

@@ -2,9 +2,8 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/Header.astro';
 import EndMark from '@/components/EndMark.astro';
-import { AVATAR_IMAGE, BIRTHDAY, HOMECOMING_DATE, daysOld, formatChineseDate } from '@/lib/days';
+import { AVATAR_IMAGE, BIRTHDAY, HOMECOMING_DATE, formatChineseDate } from '@/lib/days';
 
-const days = daysOld();
 const birthdayLabel = formatChineseDate(BIRTHDAY);
 const homeLabel = formatChineseDate(HOMECOMING_DATE);
 ---
@@ -26,7 +25,7 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
         关于
       </h1>
       <p class="mt-6 text-base md:text-lg text-ink-soft leading-relaxed">
-        一本关于一只边牧的私人摄影记录。
+        一只边牧，慢慢长大的样子。
       </p>
     </header>
 
@@ -54,7 +53,7 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
           <dt class="folio">品种</dt>
-          <dd class="col-span-2 text-ink">Border Collie 边牧</dd>
+          <dd class="col-span-2 text-ink">边牧</dd>
         </div>
         <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
           <dt class="folio">性别</dt>
@@ -68,30 +67,24 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
           <dt class="folio">生日</dt>
           <dd class="col-span-2 text-ink tabular-nums">{birthdayLabel}</dd>
         </div>
-        <div class="grid grid-cols-3 gap-4 border-b border-line pb-3">
+        <div class="grid grid-cols-3 gap-4 pt-3">
           <dt class="folio">到家</dt>
           <dd class="col-span-2 text-ink tabular-nums">{homeLabel}</dd>
-        </div>
-        <div class="grid grid-cols-3 gap-4 pt-3">
-          <dt class="folio">出生</dt>
-          <dd class="col-span-2 text-ink tabular-nums">{days} 天</dd>
         </div>
       </dl>
     </section>
 
     <hr class="hairline my-12 md:my-16" />
 
-    <!-- Editorial essay -->
+    <!-- 主人手记 (warmer tone) -->
     <section class="reveal space-y-5 text-base md:text-lg text-ink-soft leading-relaxed">
       <p>
-        这是我家边牧白板的成长日记。一个只为他一个人开的小角落。
+        他叫白板，是只边牧。2026 年 9 月 10 日出生，10 月 8 日来到我们家。
       </p>
       <p>
-        不想发朋友圈，也不想在社交媒体上表演养狗。这里只是把每天的样子记下来。他今天吃了什么，玩了什么，有什么新的表情。
+        每天给他拍一张或几张照片，慢慢攒起来，就有了这本小册子。
       </p>
     </section>
-
-    <hr class="hairline my-12 md:my-16" />
 
   </article>
 

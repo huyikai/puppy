@@ -14,9 +14,8 @@ export interface Props {
   meta: DayData;
   photos: Array<PhotoMeta & { caption: string; cover: boolean }>;
   videos?: Array<VideoMeta & { caption: string }>;
-  /** 1-based spread index, used in folio */
+  /** 1-based spread index */
   spreadIndex: number;
-  /** Total spreads, for folio display */
   totalSpreads: number;
 }
 
@@ -31,39 +30,21 @@ const {
 
 const dayN = dayNumber(date);
 const dateLabel = formatChineseDate(date);
-const folio = String(spreadIndex).padStart(3, '0');
-const totalFolio = String(totalSpreads).padStart(3, '0');
 ---
 
-{/* A spread: one Day as one page in the photo book. */}
 <article class="mb-32 md:mb-48 pt-12 md:pt-24" data-spread data-date={date}>
 
-  <!-- Spread head: date as small folio-like text, day number as larger type -->
+  <!-- Spread head: one line, no folio -->
   <header class="container-plate mb-10 md:mb-16 reveal">
-
-    <div class="flex items-baseline justify-between gap-4 mb-6">
-      <p class="folio">{folio}</p>
-      <p class="folio">{dateLabel}</p>
-    </div>
-
-    <div class="flex items-end justify-between gap-6 border-b border-line pb-6 md:pb-10">
-      <div>
-        <p class="text-sm md:text-base text-ink-soft">
-          Day {dayN}
-        </p>
-      </div>
-      <p class="folio">
-        {folio} / {totalFolio}
+    <div class="flex items-baseline justify-between gap-4 border-b border-line pb-5">
+      <p class="text-sm md:text-base text-ink-soft tabular-nums">
+        {dateLabel}
+      </p>
+      <p class="text-sm md:text-base text-ink-muted tabular-nums">
+        第 {dayN} 天 / 共 {totalSpreads} 天
       </p>
     </div>
-
   </header>
-
-  {/*
-    Plates: photo 0 is the lead plate (full container width).
-    Photos 1+ are arranged as a trio (3-column) under the lead.
-    Videos slot in after the trio, same row.
-  */}
 
   <div class="space-y-4 md:space-y-6 stagger">
 
