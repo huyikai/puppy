@@ -307,6 +307,18 @@ async function processDay(date) {
     }
   }
 
+  // 合并：确保所有旧 manifest 条目不丢失（防止 heic-convert 失败时丢数据）
+  for (const [name, oldPhoto] of oldPhotosByName) {
+    if (!photos.find((p) => p.original === name)) {
+      photos.push(oldPhoto);
+    }
+  }
+  for (const [name, oldVideo] of oldVideosByName) {
+    if (!videos.find((v) => v.original === name)) {
+      videos.push(oldVideo);
+    }
+  }
+
   // 按原始文件名排序
   photos.sort((a, b) => a.original.localeCompare(b.original, 'en', { numeric: true }));
   videos.sort((a, b) => a.original.localeCompare(b.original, 'en', { numeric: true }));
