@@ -1,6 +1,5 @@
 ---
 export interface Props {
-  /** Current location in the book */
   at?: 'cover' | 'spreads' | 'colophon';
 }
 
@@ -12,36 +11,34 @@ const { at = 'cover' } = Astro.props;
   style="padding-top: env(safe-area-inset-top);"
 >
   <div class="container-plate">
-    <div class="h-14 md:h-16 flex items-center justify-between text-sm">
+    <!-- Centered nav, no logo on the left -->
+    <nav class="h-14 md:h-16 flex items-center justify-center gap-8 md:gap-12 text-sm">
       <a
         href="/"
-        class="font-medium tracking-tight text-ink hover:text-accent transition-colors duration-base"
+        class:list={[
+          'relative py-1 transition-colors duration-base',
+          at === 'cover' ? 'text-ink' : 'text-ink-soft hover:text-ink',
+        ]}
+        aria-current={at === 'cover' ? 'page' : undefined}
       >
-        白板
+        记录
+        {at === 'cover' && (
+          <span class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style="background-color: var(--accent);"></span>
+        )}
       </a>
-
-      <nav class="flex items-center gap-6 md:gap-8 text-ink-soft">
-        <a
-          href="/"
-          class:list={[
-              at === 'cover' ? 'text-ink' : '',
-              'hover:text-ink transition-colors duration-base',
-            ]}
-          aria-current={at === 'cover' ? 'page' : undefined}
-        >
-          记录
-        </a>
-        <a
-          href="/about/"
-          class:list={[
-              at === 'colophon' ? 'text-ink' : '',
-              'hover:text-ink transition-colors duration-base',
-            ]}
-          aria-current={at === 'colophon' ? 'page' : undefined}
-        >
-          关于
-        </a>
-      </nav>
-    </div>
+      <a
+        href="/about/"
+        class:list={[
+          'relative py-1 transition-colors duration-base',
+          at === 'colophon' ? 'text-ink' : 'text-ink-soft hover:text-ink',
+        ]}
+        aria-current={at === 'colophon' ? 'page' : undefined}
+      >
+        关于
+        {at === 'colophon' && (
+          <span class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style="background-color: var(--accent);"></span>
+        )}
+      </a>
+    </nav>
   </div>
 </header>
