@@ -1,12 +1,15 @@
 ---
-import { AVATAR_IMAGE, daysOld } from '@/lib/days';
+import { daysOld } from '@/lib/days';
 
 const daysAlive = daysOld();
+
+// Cover portrait: AI-generated animated WebP based on白板's photos
+const COVER_PORTRAIT = '/cover/cover-animated.webp';
 ---
 
 {/*
   Cover page. Title page of the photo book.
-  Centered composition: small portrait + large title + small metadata.
+  Centered composition: animated portrait + large title + small metadata.
   A scroll hint with a one-time page-bounce + text float animation.
 */}
 <section
@@ -19,12 +22,10 @@ const daysAlive = daysOld();
 
       <div class="reveal-scale">
         <img
-          src={AVATAR_IMAGE.src}
-          srcset={AVATAR_IMAGE.srcset}
-          sizes={AVATAR_IMAGE.sizes}
-          alt={AVATAR_IMAGE.alt}
-          width="800"
-          height="800"
+          src={COVER_PORTRAIT}
+          alt="白板"
+          width="480"
+          height="480"
           class="w-44 h-44 md:w-56 md:h-56 object-cover plate"
           loading="eager"
         />
