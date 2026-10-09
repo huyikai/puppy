@@ -16,8 +16,8 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 
   <article class="container-prose py-20 md:py-32">
 
-    <!-- 标题 -->
-    <header class="reveal">
+    <!-- 标题（居中） -->
+    <header class="reveal text-center">
       <h1
         class="font-medium text-ink tracking-tight leading-[1.0]"
         style="font-size: clamp(2.5rem, 8vw, 5.5rem);"
@@ -29,9 +29,9 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
       </p>
     </header>
 
-    <!-- 头像 -->
-    <section class="reveal mt-20 md:mt-28">
-      <figure class="plate overflow-hidden aspect-square">
+    <!-- 头像（居中） -->
+    <section class="reveal mt-20 md:mt-28 flex justify-center">
+      <figure class="plate overflow-hidden aspect-square w-full max-w-md">
         <img
           src={AVATAR_IMAGE.src}
           srcset={AVATAR_IMAGE.srcset}
@@ -45,40 +45,40 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
       </figure>
     </section>
 
-    <!-- 主人手记（暖，诗歌式） -->
-    <section class="reveal mt-20 md:mt-28">
-      <p class="text-2xl md:text-4xl text-ink font-light leading-[1.4] tracking-tight max-w-prose">
+    <!-- 主人手记（居中） -->
+    <section class="reveal mt-20 md:mt-28 text-center">
+      <p class="text-2xl md:text-4xl text-ink font-light leading-[1.4] tracking-tight mx-auto max-w-md">
         每天给他拍拍照，<br />
         看着他慢慢长大。
       </p>
     </section>
 
-    <!-- 事实（最简 dl，无横线） -->
-    <section class="reveal mt-20 md:mt-28">
-      <dl class="space-y-4 text-sm">
-        <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">名字</dt>
-          <dd class="col-span-2 text-ink">白板</dd>
+    <!-- 事实 dl（每行 dt + dd 垂直堆叠居中） -->
+    <section class="reveal mt-20 md:mt-28 text-center">
+      <dl class="inline-block space-y-7 text-sm">
+        <div>
+          <dt class="folio mb-2">名字</dt>
+          <dd class="text-ink">白板</dd>
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">品种</dt>
-          <dd class="col-span-2 text-ink">边牧</dd>
+        <div>
+          <dt class="folio mb-2">品种</dt>
+          <dd class="text-ink">边牧</dd>
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">性别</dt>
-          <dd class="col-span-2 text-ink">公</dd>
+        <div>
+          <dt class="folio mb-2">性别</dt>
+          <dd class="text-ink">公</dd>
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">毛色</dt>
-          <dd class="col-span-2 text-ink">黑白</dd>
+        <div>
+          <dt class="folio mb-2">毛色</dt>
+          <dd class="text-ink">黑白</dd>
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">生日</dt>
-          <dd class="col-span-2 text-ink tabular-nums">{birthdayLabel}</dd>
+        <div>
+          <dt class="folio mb-2">生日</dt>
+          <dd class="text-ink tabular-nums">{birthdayLabel}</dd>
         </div>
-        <div class="grid grid-cols-3 gap-4">
-          <dt class="folio">到家</dt>
-          <dd class="col-span-2 text-ink tabular-nums">{homeLabel}</dd>
+        <div>
+          <dt class="folio mb-2">到家</dt>
+          <dd class="text-ink tabular-nums">{homeLabel}</dd>
         </div>
       </dl>
     </section>
