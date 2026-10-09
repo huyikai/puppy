@@ -38,15 +38,22 @@ const execFileP = promisify(execFile);
 async function decodeToBuffer(srcPath, ext) {
   const lower = ext.toLowerCase();
   if (lower === '.heic' || lower === '.heif') {
-    const input = await readFile(srcPath);
-    const output = await heicConvert({
-      buffer: input,
-      format: 'JPEG',
-      quality: 0.95,
-    });
-    return Buffer.from(output);
+    try {
+      const input = await readFile(srcPath);
+      const output = await heicConvert({
+        buffer: input,
+        format: 'JPEG',
+        quality: 0.95,
+      });
+      return Buffer.from(output);
+    } catch (err) {
+      // Fallback: return null to let sharp handle it directly
+      // sharp may have HEIC support depending on the libvips build
+      logErr(`  heic-convert failed for ${srcPath}, falling back to sharp: ${err.message}`);
+      return null;
+    }
   }
-  return null; // 其他格式直接用 srcPath 让 sharp 自己读
+  return null;
 }
 
 // ----------------------------------------------------------------------------

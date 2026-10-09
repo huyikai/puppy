@@ -6,8 +6,9 @@ node_modules/
 dist/
 .output/
 
-# generated assets（构建时由 sharp 重新生成，不入 git）
-public/processed/
+# Note: public/processed/ IS committed to git
+# This ensures Vercel builds work without needing HEIC decoding at build time
+# (heic-convert may fail in serverless build environments)
 
 # Astro
 .astro/
