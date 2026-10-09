@@ -1,0 +1,117 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { AVATAR_IMAGE, HOMECOMING_DATE, daysSinceHomecoming, formatChineseDate } from '@/lib/days';
+
+const days = daysSinceHomecoming();
+const homeLabel = formatChineseDate(HOMECOMING_DATE);
+---
+
+<BaseLayout
+  title="关于白板"
+  description="一只边牧，慢慢长大的样子。"
+>
+  <Header slot="header" current="关于" />
+
+  <article class="container-prose pt-8 md:pt-16 pb-16">
+
+    <header class="mb-12 md:mb-16">
+      <p class="text-xs uppercase tracking-[0.2em] text-text-muted mb-3">
+        About
+      </p>
+      <h1 class="font-serif text-3xl md:text-4xl text-text-strong">
+        关于白板
+      </h1>
+    </header>
+
+    <!-- 头像 + 基础信息 -->
+    <section class="flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-12 md:mb-16">
+      <div class="shrink-0 mx-auto md:mx-0">
+        <img
+          src={AVATAR_IMAGE.src}
+          srcset={AVATAR_IMAGE.srcset}
+          sizes={AVATAR_IMAGE.sizes}
+          alt={AVATAR_IMAGE.alt}
+          width="240"
+          height="240"
+          class="w-32 h-32 md:w-48 md:h-48 rounded-full object-cover shadow-md ring-4 ring-bg-elevated"
+          loading="eager"
+        />
+      </div>
+
+      <div class="flex-1">
+        <h2 class="font-serif text-2xl md:text-3xl text-text-strong leading-tight">
+          白板
+          <span class="ml-2 text-base md:text-lg text-text-muted font-sans">Bai Ban</span>
+        </h2>
+
+        <dl class="mt-5 space-y-2 text-sm md:text-base text-text-body">
+          <div class="flex gap-3">
+            <dt class="w-16 shrink-0 text-text-muted">品种</dt>
+            <dd>边牧（Border Collie）</dd>
+          </div>
+          <div class="flex gap-3">
+            <dt class="w-16 shrink-0 text-text-muted">性别</dt>
+            <dd>公</dd>
+          </div>
+          <div class="flex gap-3">
+            <dt class="w-16 shrink-0 text-text-muted">毛色</dt>
+            <dd>黑白</dd>
+          </div>
+          <div class="flex gap-3">
+            <dt class="w-16 shrink-0 text-text-muted">到家</dt>
+            <dd>{homeLabel}</dd>
+          </div>
+          <div class="flex gap-3 items-baseline pt-3 mt-3 border-t border-border-soft/60">
+            <dt class="w-16 shrink-0 text-text-muted">现在</dt>
+            <dd>
+              <span class="font-serif text-2xl md:text-3xl text-accent">{days}</span>
+              <span class="ml-1 text-base text-text-body">天大了</span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <hr class="my-10 md:my-14 border-border-soft" />
+
+    <!-- 关于这个站点 -->
+    <section class="mb-12">
+      <h2 class="font-serif text-xl md:text-2xl text-text-strong mb-4">
+        关于这个站点
+      </h2>
+      <div class="space-y-4 text-text-body leading-relaxed">
+        <p>
+          这是我家边牧白板的成长日记。一个只为他一个人开的小角落。
+        </p>
+        <p>
+          不想发朋友圈，也不想在社交媒体上表演养狗。
+          这里只是把每天的样子记下来——他今天吃了什么、玩了什么、有什么新的表情。
+        </p>
+        <p class="text-sm text-text-muted">
+          由主人用 Astro + Tailwind 手工搭建，
+          <a href="/" class="text-accent hover:underline">时间线</a> 上每张照片都可以点开看大图。
+        </p>
+      </div>
+    </section>
+
+    <hr class="my-10 md:my-14 border-border-soft" />
+
+    <!-- 性格简评（占位，未来可拓展） -->
+    <section class="mb-12">
+      <h2 class="font-serif text-xl md:text-2xl text-text-strong mb-4">
+        小名 & 性格
+      </h2>
+      <ul class="space-y-2 text-text-body">
+        <li>· 小名：白板（黑白相间，名副其实）</li>
+        <li>· 性格：好奇、有点怂、爱黏人</li>
+        <li>· 喜欢：羊奶粉泡的狗粮、熊椅、被人摸头</li>
+        <li>· 讨厌：被关在笼子里出不来（暂时）</li>
+      </ul>
+    </section>
+
+  </article>
+
+  <Footer slot="footer" />
+</BaseLayout>

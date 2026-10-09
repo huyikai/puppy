@@ -1,0 +1,193 @@
+/* ============================================================================
+   白板的成长日记 · 全局样式
+   温暖治愈系 — 米白 + 奶茶棕 + 暖橙
+   ============================================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------------------------------------------------
+   CSS 变量（设计 Token 集中点）
+   ---------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    /* 背景层级 */
+    --bg-base: #faf7f2;
+    --bg-elevated: #fffdf8;
+    --bg-overlay: rgba(40, 30, 20, 0.72);
+
+    /* 品牌/语义色 */
+    --color-accent: #c49b6c;
+    --color-accent-soft: #e8d5bc;
+    --color-warm: #e8a87c;
+    --color-warm-soft: #f4d9c0;
+
+    /* 文字 */
+    --color-text-strong: #2e2a26;
+    --color-text-body: #4a4540;
+    --color-text-muted: #8c847b;
+    --color-text-faint: #b5ada3;
+
+    /* 边框 */
+    --color-border-soft: #ede6da;
+
+    /* 动效 */
+    --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --ease-in-out-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    --dur-fast: 150ms;
+    --dur-base: 250ms;
+    --dur-slow: 400ms;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Base 样式
+   ---------------------------------------------------------------------------- */
+@layer base {
+  html {
+    background-color: var(--bg-base);
+    color: var(--color-text-body);
+    font-family: theme('fontFamily.sans');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 极淡纸纹叠加：1% 不透明度的 SVG noise */
+  body {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.14 0 0 0 0 0.10 0 0 0 0.012 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    background-repeat: repeat;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: theme('fontFamily.serif');
+    color: var(--color-text-strong);
+    font-weight: 500;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-text-strong);
+  }
+
+  /* 移动端点击高亮关闭 */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 链接基础 */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* 滚动条样式（桌面） */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-soft);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent-soft);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   组件层：复用样式
+   ---------------------------------------------------------------------------- */
+@layer components {
+  .container-prose {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .container-content {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--color-text-body);
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    transition: color var(--dur-base) var(--ease-out-soft);
+  }
+  .btn-link:hover {
+    color: var(--color-accent);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   工具类：动效
+   ---------------------------------------------------------------------------- */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn var(--dur-slow) var(--ease-out-soft) both;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp var(--dur-slow) var(--ease-out-soft) both;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   View Transitions（页面切换淡入淡出）
+   ---------------------------------------------------------------------------- */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: fadeOut 200ms var(--ease-in-out-soft) both;
+}
+
+::view-transition-new(root) {
+  animation: fadeIn 200ms var(--ease-in-out-soft) both;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

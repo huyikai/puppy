@@ -1,0 +1,70 @@
+---
+import '@/styles/global.css';
+
+export interface Props {
+  title?: string;
+  image?: string; // og:image
+  description?: string;
+  /** 当前是否在首页（影响 Header 显示「首页」链接 vs 隐藏） */
+  isHome?: boolean;
+}
+
+const {
+  title = '白板的成长日记',
+  image = '/og-cover.jpg',
+  description = '记录我家边牧白板的成长点滴。',
+  isHome = false,
+} = Astro.props;
+
+const fullTitle = title === '白板的成长日记' ? title : `${title} · 白板的成长日记`;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#FAF7F2" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="白板" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="白板的成长日记" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site).toString()} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="zh_CN" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site).toString()} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <slot name="header">
+      <!-- 默认 header，由具体页面提供以传入 isHome -->
+    </slot>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <slot name="footer" />
+  </body>
+</html>

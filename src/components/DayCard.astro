@@ -1,0 +1,108 @@
+---
+import PhotoCard from './PhotoCard.astro';
+import VideoCard from './VideoCard.astro';
+import {
+  formatChineseDate,
+  moodToEmoji,
+  dayNumber,
+  type DayData,
+  type PhotoMeta,
+  type VideoMeta,
+} from '@/lib/days';
+
+export interface Props {
+  date: string;
+  meta: DayData;
+  photos: Array<PhotoMeta & { caption: string; cover: boolean }>;
+  videos?: Array<VideoMeta & { caption: string }>;
+  /** 在时间线中显示前 N 张图；剩余进单日详情页（默认 6） */
+  previewLimit?: number;
+  /** 是否首页（影响布局密度） */
+  compact?: boolean;
+}
+
+const {
+  date,
+  meta,
+  photos,
+  videos = [],
+  previewLimit = 6,
+  compact = true,
+} = Astro.props;
+
+const dayN = dayNumber(date);
+const visiblePhotos = photos.slice(0, previewLimit);
+const hiddenCount = photos.length - visiblePhotos.length;
+const dateLabel = formatChineseDate(date);
+---
+
+<section class="mb-14 md:mb-20" data-day-card data-date={date}>
+  <!-- 时间锚点 -->
+  <header class="mb-4 md:mb-6 flex items-baseline justify-between gap-3">
+    <div class="flex items-baseline gap-2.5">
+      <h2 class="font-serif text-xl md:text-2xl text-text-strong leading-none">
+        {dateLabel}
+      </h2>
+      {meta.mood && (
+        <span class="text-sm text-text-muted" aria-label="心情">
+          {moodToEmoji(meta.mood)}
+        </span>
+      )}
+    </div>
+    <a
+      href={`/day/${date}/`}
+      class="text-xs md:text-sm text-text-muted hover:text-accent transition-colors duration-base"
+    >
+      Day {dayN} ›
+    </a>
+  </header>
+
+  {meta.title && (
+    <p class="mb-3 text-sm md:text-base text-text-body font-serif italic">
+      「{meta.title}」
+    </p>
+  )}
+
+  {meta.note && compact && (
+    <p class="mb-5 text-sm md:text-base text-text-body leading-relaxed max-w-prose line-clamp-3">
+      {meta.note}
+    </p>
+  )}
+
+  <!-- 照片网格 -->
+  {visiblePhotos.length > 0 && (
+    <div class="grid gap-1.5 md:gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+      {visiblePhotos.map((p) => (
+        <PhotoCard
+          src={p.src}
+          srcset={p.srcset}
+          alt={p.caption || `白板 · ${dateLabel}`}
+          aspectRatio={p.aspectRatio}
+          caption={p.caption || undefined}
+          onClick="1"
+        />
+      ))}
+    </div>
+  )}
+
+  <!-- 视频区（始终显示当天全部视频） -->
+  {videos.length > 0 && (
+    <div class="mt-3 md:mt-4 grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2">
+      {videos.map((v) => (
+        <VideoCard videoSrc={v.video} posterSrc={v.poster} />
+      ))}
+    </div>
+  )}
+
+  <!-- 隐藏更多提示 -->
+  {hiddenCount > 0 && (
+    <div class="mt-4 text-center">
+      <a
+        href={`/day/${date}/`}
+        class="inline-flex items-center gap-1 text-xs md:text-sm text-text-muted hover:text-accent transition-colors duration-base"
+      >
+        查看剩余 {hiddenCount} 张 ›
+      </a>
+    </div>
+  )}
+</section>

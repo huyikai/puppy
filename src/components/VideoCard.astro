@@ -1,0 +1,70 @@
+---
+export interface Props {
+  videoSrc: string;
+  posterSrc?: string | null;
+  alt?: string;
+  /** 是否大尺寸（详情页用） */
+  large?: boolean;
+}
+
+const { videoSrc, posterSrc, alt = '', large = false } = Astro.props;
+---
+
+<figure class={`relative overflow-hidden rounded-md bg-bg-elevated ${large ? 'aspect-video' : 'aspect-video'}`}
+        data-video-card>
+  <!-- Poster（点击前显示） -->
+  {posterSrc && (
+    <img
+      src={posterSrc}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      class="absolute inset-0 w-full h-full object-cover"
+      data-video-poster
+    />
+  )}
+
+  <!-- 视频元素（懒挂载） -->
+  <video
+    src={videoSrc}
+    poster={posterSrc || undefined}
+    preload="none"
+    playsinline
+    controls
+    class="absolute inset-0 w-full h-full object-cover bg-bg-base hidden"
+    data-video
+  >
+    您的浏览器不支持 video 标签。
+  </video>
+
+  <!-- 播放按钮 -->
+  <button
+    type="button"
+    class="absolute inset-0 z-10 flex items-center justify-center group"
+    aria-label="播放视频"
+    data-video-play
+  >
+    <span class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-md transition-all duration-base ease-out-soft group-hover:scale-110 group-hover:bg-white">
+      <svg viewBox="0 0 24 24" class="w-6 h-6 md:w-8 md:h-8 text-text-strong ml-1" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </span>
+  </button>
+</figure>
+
+<script>
+  document.querySelectorAll('[data-video-card]').forEach((card) => {
+    const playBtn = card.querySelector('[data-video-play]') as HTMLButtonElement | null;
+    const video = card.querySelector('[data-video]') as HTMLVideoElement | null;
+    const poster = card.querySelector('[data-video-poster]') as HTMLImageElement | null;
+    if (!playBtn || !video) return;
+
+    playBtn.addEventListener('click', () => {
+      poster?.classList.add('hidden');
+      playBtn.classList.add('hidden');
+      video.classList.remove('hidden');
+      video.controls = true;
+      video.play().catch(() => {});
+    });
+  });
+</script>

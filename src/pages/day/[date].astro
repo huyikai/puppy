@@ -1,0 +1,164 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import PhotoCard from '@/components/PhotoCard.astro';
+import VideoCard from '@/components/VideoCard.astro';
+import Lightbox from '@/components/Lightbox.astro';
+
+import {
+  getAllDays,
+  getDay,
+  getManifest,
+  resolvePhotos,
+  resolveVideos,
+  formatChineseDate,
+  dayNumber,
+  moodToEmoji,
+} from '@/lib/days';
+
+export async function getStaticPaths() {
+  const days = await getAllDays();
+  return days.map((d) => ({ params: { date: d.data.date } }));
+}
+
+const { date } = Astro.params;
+const entry = await getDay(date!);
+
+if (!entry) {
+  return Astro.redirect('/404/');
+}
+
+const manifest = await getManifest(date!);
+const photos = resolvePhotos(entry.data.photos, manifest);
+const videos = resolveVideos(entry.data.videos, manifest);
+
+const dayN = dayNumber(date!);
+const dateLabel = formatChineseDate(date!);
+const allDays = await getAllDays();
+const idx = allDays.findIndex((d) => d.data.date === date);
+const prevDay = idx < allDays.length - 1 ? allDays[idx + 1] : null;
+const nextDay = idx > 0 ? allDays[idx - 1] : null;
+---
+
+<BaseLayout
+  title={`${dateLabel} · Day ${dayN}`}
+  description={entry.data.note || `${dateLabel} · 白板记录`}
+>
+  <Header slot="header" current={`${dateLabel} · Day ${dayN}`} />
+
+  <article class="container-prose pt-8 md:pt-12 pb-16">
+
+    <!-- 返回 -->
+    <div class="mb-6">
+      <a href="/" class="btn-link">
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        返回时间线
+      </a>
+    </div>
+
+    <!-- 头部 -->
+    <header class="mb-8 md:mb-12">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-xs uppercase tracking-[0.2em] text-text-muted">
+          Day {dayN}
+        </span>
+        {entry.data.mood && (
+          <span class="text-sm text-text-muted" aria-label="心情">
+            {moodToEmoji(entry.data.mood)}
+          </span>
+        )}
+      </div>
+      <h1 class="font-serif text-3xl md:text-4xl text-text-strong">
+        {dateLabel}
+      </h1>
+      {entry.data.title && (
+        <p class="mt-2 font-serif italic text-lg md:text-xl text-text-body">
+          「{entry.data.title}」
+        </p>
+      )}
+      {entry.data.weather && (
+        <p class="mt-3 text-xs text-text-muted tracking-wide">
+          天气 · {entry.data.weather}
+        </p>
+      )}
+    </header>
+
+    <!-- note -->
+    {entry.data.note && (
+      <div class="mb-10 md:mb-14 text-base md:text-lg text-text-body leading-relaxed whitespace-pre-line font-serif">
+        {entry.data.note}
+      </div>
+    )}
+
+    <!-- 大图网格 -->
+    {photos.length > 0 && (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-10 md:mb-14">
+        {photos.map((p) => (
+          <figure>
+            <PhotoCard
+              src={p.src}
+              srcset={p.srcset}
+              alt={p.caption || `白板 · ${dateLabel}`}
+              aspectRatio={p.aspectRatio}
+              onClick="1"
+              rounded={true}
+            />
+            {p.caption && (
+              <figcaption class="mt-2 px-1 text-xs md:text-sm text-text-muted">
+                {p.caption}
+              </figcaption>
+            )}
+          </figure>
+        ))}
+      </div>
+    )}
+
+    <!-- 视频区 -->
+    {videos.length > 0 && (
+      <div class="mb-10 md:mb-14">
+        <h2 class="font-serif text-xl md:text-2xl text-text-strong mb-4">视频</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+          {videos.map((v) => (
+            <VideoCard videoSrc={v.video} posterSrc={v.poster} large={true} />
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- 上下日导航 -->
+    <nav class="mt-12 pt-8 border-t border-border-soft flex items-center justify-between text-sm">
+      {prevDay ? (
+        <a
+          href={`/day/${prevDay.data.date}/`}
+          class="btn-link"
+          aria-label={`上一段 ${formatChineseDate(prevDay.data.date)}`}
+        >
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          {formatChineseDate(prevDay.data.date)}
+        </a>
+      ) : <span></span>}
+
+      {nextDay ? (
+        <a
+          href={`/day/${nextDay.data.date}/`}
+          class="btn-link"
+          aria-label={`下一段 ${formatChineseDate(nextDay.data.date)}`}
+        >
+          {formatChineseDate(nextDay.data.date)}
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      ) : <span></span>}
+    </nav>
+
+  </article>
+
+  <Footer slot="footer" />
+  <Lightbox />
+</BaseLayout>

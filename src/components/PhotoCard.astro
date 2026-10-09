@@ -1,0 +1,59 @@
+---
+export interface Props {
+  src: string;
+  srcset?: string;
+  alt?: string;
+  /** 点击回调（打开 Lightbox）。若不传，则图片不可点 */
+  onClick?: string;
+  /** 加载模式 */
+  loading?: 'eager' | 'lazy';
+  fetchpriority?: 'auto' | 'high' | 'low';
+  /** 宽高比例（用于占位高度，避免 CLS） */
+  aspectRatio?: number;
+  /** 是否显示 caption 覆盖在底部 */
+  caption?: string;
+  /** 是否圆角图片（详情页用，关闭；时间线卡片图片本身是方形裁剪过） */
+  rounded?: boolean;
+}
+
+const {
+  src,
+  srcset,
+  alt = '',
+  onClick,
+  loading = 'lazy',
+  fetchpriority = 'auto',
+  aspectRatio = 1,
+  caption,
+  rounded = true,
+} = Astro.props;
+
+const sizes = '(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 50vw';
+---
+
+<div class="relative overflow-hidden bg-bg-elevated group"
+     class:list={[rounded && 'rounded-md']}
+     style={`aspect-ratio: ${aspectRatio};`}
+     data-photo={onClick ? 'clickable' : undefined}
+     data-photo-src={onClick}
+     data-photo-srcset={srcset}
+     data-photo-alt={alt}
+     role={onClick ? 'button' : undefined}
+     tabindex={onClick ? 0 : undefined}>
+  <img
+    src={src}
+    srcset={srcset}
+    sizes={sizes}
+    alt={alt}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+    class="absolute inset-0 w-full h-full object-cover transition-transform duration-slow ease-in-out-soft group-hover:scale-[1.02]"
+  />
+
+  {caption && (
+    <div class="absolute inset-x-0 bottom-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-base">
+      <p class="text-xs text-white line-clamp-2">{caption}</p>
+    </div>
+  )}
+</div>

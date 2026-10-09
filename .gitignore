@@ -1,0 +1,51 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+.output/
+
+# generated assets（构建时由 sharp 重新生成，不入 git）
+public/processed/
+
+# Astro
+.astro/
+
+# generated types
+*.d.ts
+
+# environment variables
+.env
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+
+# macOS
+.DS_Store
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# misc
+.cache/
+.turbo/
+coverage/
+
+# screenshots（验证用的临时截图）
+desktop-*.png
+mobile-*.png
+.playwright-mcp/
+
+# 用户本地原始素材（拷贝到 src/content/days/<date>/raw/ 后无需保留）
+shooting/

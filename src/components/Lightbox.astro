@@ -1,0 +1,168 @@
+---
+/* 全局 Lightbox 组件：在 layout 末尾挂一次 */
+---
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-bg-overlay backdrop-blur-md"
+  role="dialog"
+  aria-modal="true"
+  aria-label="图片预览"
+  data-lightbox
+>
+  <!-- 关闭按钮 -->
+  <button
+    type="button"
+    class="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors duration-base"
+    aria-label="关闭"
+    data-lightbox-close
+  >
+    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  <!-- 左 -->
+  <button
+    type="button"
+    class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors duration-base"
+    aria-label="上一张"
+    data-lightbox-prev
+  >
+    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
+  <!-- 右 -->
+  <button
+    type="button"
+    class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors duration-base"
+    aria-label="下一张"
+    data-lightbox-next
+  >
+    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </button>
+
+  <!-- 图 -->
+  <img
+    src=""
+    alt=""
+    class="max-w-[92vw] max-h-[88vh] rounded-md animate-fade-in select-none"
+    data-lightbox-img
+    draggable="false"
+  />
+
+  <!-- 计数 + caption -->
+  <div class="absolute bottom-4 md:bottom-6 inset-x-0 z-10 flex flex-col items-center gap-2 px-4 pointer-events-none">
+    <p class="text-xs md:text-sm text-white/85 font-medium" data-lightbox-caption></p>
+    <p class="text-xs text-white/60 tabular-nums" data-lightbox-counter></p>
+  </div>
+</div>
+
+<script>
+  type LightboxItem = {
+    src: string;
+    srcset?: string;
+    alt?: string;
+    caption?: string;
+  };
+
+  const root = document.querySelector('[data-lightbox]') as HTMLElement | null;
+  if (root) {
+    const imgEl = root.querySelector('[data-lightbox-img]') as HTMLImageElement;
+    const counterEl = root.querySelector('[data-lightbox-counter]') as HTMLElement;
+    const captionEl = root.querySelector('[data-lightbox-caption]') as HTMLElement;
+    const closeBtn = root.querySelector('[data-lightbox-close]') as HTMLButtonElement;
+    const prevBtn = root.querySelector('[data-lightbox-prev]') as HTMLButtonElement;
+    const nextBtn = root.querySelector('[data-lightbox-next]') as HTMLButtonElement;
+
+    let items: LightboxItem[] = [];
+    let current = 0;
+
+    function show(i: number) {
+      if (i < 0) i = items.length - 1;
+      if (i >= items.length) i = 0;
+      current = i;
+      const it = items[i];
+      // 用 srcset 选合适大小
+      imgEl.srcset = it.srcset || '';
+      imgEl.src = it.src;
+      imgEl.alt = it.alt || '';
+      captionEl.textContent = it.caption || '';
+      counterEl.textContent = `${i + 1} / ${items.length}`;
+    }
+
+    function open(newItems: LightboxItem[], startIndex = 0) {
+      items = newItems;
+      show(startIndex);
+      root!.classList.remove('hidden');
+      root!.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      root!.classList.add('hidden');
+      root!.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    function next() { show(current + 1); }
+    function prev() { show(current - 1); }
+
+    closeBtn.addEventListener('click', close);
+    prevBtn.addEventListener('click', prev);
+    nextBtn.addEventListener('click', next);
+    root.addEventListener('click', (e) => {
+      // 点背景关闭，点击图/按钮不关闭
+      if (e.target === root) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (root.classList.contains('hidden')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') next();
+      else if (e.key === 'ArrowLeft') prev();
+    });
+
+    // 收集页面上所有带 data-photo="clickable" 的元素作为 lightbox 列表
+    function gather(): { items: LightboxItem[]; refMap: WeakMap<Element, number> } {
+      const els = Array.from(document.querySelectorAll('[data-photo="clickable"]'));
+      const refMap = new WeakMap<Element, number>();
+      const list: LightboxItem[] = els.map((el, i) => {
+        const src = (el as HTMLElement).dataset.photoSrc || '';
+        const srcset = (el as HTMLElement).dataset.photoSrcset || '';
+        const alt = (el as HTMLElement).dataset.photoAlt || '';
+        const caption = (el as HTMLElement).dataset.photoCaption || '';
+        refMap.set(el, i);
+        return { src, srcset, alt, caption };
+      });
+      return { items: list, refMap };
+    }
+
+    // 事件代理：点击页面任意带 data-photo="clickable" 的元素 → 打开 lightbox
+    document.addEventListener('click', (e) => {
+      const target = (e.target as HTMLElement).closest('[data-photo="clickable"]') as HTMLElement | null;
+      if (!target) return;
+      const { items, refMap } = gather();
+      const i = refMap.get(target);
+      if (typeof i === 'number') {
+        e.preventDefault();
+        open(items, i);
+      }
+    });
+
+    // 键盘激活（a11y）：Enter / Space 触发
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const target = (e.target as HTMLElement).closest('[data-photo="clickable"]') as HTMLElement | null;
+      if (!target) return;
+      e.preventDefault();
+      const { items, refMap } = gather();
+      const i = refMap.get(target);
+      if (typeof i === 'number') open(items, i);
+    });
+  }
+</script>

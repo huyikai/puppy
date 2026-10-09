@@ -1,0 +1,26 @@
+---
+import { daysSinceHomecoming } from '@/lib/days';
+
+const daysAlive = daysSinceHomecoming();
+---
+
+<footer class="mt-24 md:mt-32 border-t border-border-soft bg-bg-elevated/60"
+        style="padding-bottom: env(safe-area-inset-bottom);">
+  <div class="container-content py-10 md:py-14 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 text-center md:text-left">
+
+    <div>
+      <p class="font-serif text-xl md:text-2xl text-text-strong">
+        白板 · 今天 <span class="text-accent">{daysAlive}</span> 天大了
+      </p>
+      <p class="mt-1 text-xs text-text-muted tracking-wide">
+        愿他每天都比昨天更勇敢一点。
+      </p>
+    </div>
+
+    <div class="flex flex-col items-center md:items-end gap-1 text-xs text-text-faint">
+      <span>© {new Date().getFullYear()} 白板的成长日记</span>
+      <span>边牧 · 黑白花 · 公</span>
+    </div>
+
+  </div>
+</footer>
