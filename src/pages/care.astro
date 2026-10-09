@@ -22,10 +22,25 @@ const days = daysOld();
       </p>
     </header>
 
-    <!-- Layout: left sticky nav + right content -->
-    <div class="max-w-[1100px] mx-auto flex gap-12 lg:gap-16">
+    <!-- Mobile anchor (horizontal scroll) -->
+    <nav class="lg:hidden -mx-5 px-5 mb-8 overflow-x-auto">
+      <div class="flex gap-2 pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <a href="#feeding" class="care-chip">喂养</a>
+        <a href="#sleep" class="care-chip">睡眠</a>
+        <a href="#warmth" class="care-chip">保暖</a>
+        <a href="#health" class="care-chip">健康</a>
+        <a href="#socialize" class="care-chip">社会化</a>
+        <a href="#toilet" class="care-chip">如厕</a>
+        <a href="#play" class="care-chip">玩耍</a>
+        <a href="#safety" class="care-chip">安全</a>
+        <a href="#milestones" class="care-chip">里程碑</a>
+      </div>
+    </nav>
 
-      <!-- Sticky anchor nav (hidden on mobile) -->
+    <!-- Layout: left sticky nav + right content (desktop only) -->
+    <div class="max-w-[1100px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-16">
+
+      <!-- Sticky anchor nav (desktop only) -->
       <nav class="hidden lg:block w-48 shrink-0" aria-label="章节导航">
         <div class="sticky top-24 space-y-3">
           <a href="#feeding" class="care-nav-link">喂养</a>
@@ -37,21 +52,6 @@ const days = daysOld();
           <a href="#play" class="care-nav-link">运动与玩耍</a>
           <a href="#safety" class="care-nav-link">安全须知</a>
           <a href="#milestones" class="care-nav-link">发育里程碑</a>
-        </div>
-      </nav>
-
-      <!-- Mobile anchor (horizontal scroll) -->
-      <nav class="lg:hidden -mx-5 px-5 mb-8 overflow-x-auto">
-        <div class="flex gap-2 pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
-          <a href="#feeding" class="care-chip">喂养</a>
-          <a href="#sleep" class="care-chip">睡眠</a>
-          <a href="#warmth" class="care-chip">保暖</a>
-          <a href="#health" class="care-chip">健康</a>
-          <a href="#socialize" class="care-chip">社会化</a>
-          <a href="#toilet" class="care-chip">如厕</a>
-          <a href="#play" class="care-chip">玩耍</a>
-          <a href="#safety" class="care-chip">安全</a>
-          <a href="#milestones" class="care-chip">里程碑</a>
         </div>
       </nav>
 
