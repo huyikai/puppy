@@ -53,31 +53,31 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
       </p>
     </section>
 
-    <!-- 事实 dl（每行 dt + dd 垂直堆叠居中） -->
-    <section class="reveal mt-20 md:mt-28 text-center">
-      <dl class="inline-block space-y-7 text-sm">
-        <div>
-          <dt class="folio mb-2">名字</dt>
+    <!-- 事实 dl（一行 key-value 居中） -->
+    <section class="reveal mt-20 md:mt-28">
+      <dl class="text-sm space-y-4">
+        <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+          <dt class="folio">名字</dt>
           <dd class="text-ink">白板</dd>
         </div>
-        <div>
-          <dt class="folio mb-2">品种</dt>
+        <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+          <dt class="folio">品种</dt>
           <dd class="text-ink">边牧</dd>
         </div>
-        <div>
-          <dt class="folio mb-2">性别</dt>
+        <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+          <dt class="folio">性别</dt>
           <dd class="text-ink">公</dd>
         </div>
-        <div>
-          <dt class="folio mb-2">毛色</dt>
+        <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+          <dt class="folio">毛色</dt>
           <dd class="text-ink">黑白</dd>
         </div>
-        <div>
-          <dt class="folio mb-2">生日</dt>
+        <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+          <dt class="folio">生日</dt>
           <dd class="text-ink tabular-nums">{birthdayLabel}</dd>
         </div>
-        <div>
-          <dt class="folio mb-2">到家</dt>
+        <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+          <dt class="folio">到家</dt>
           <dd class="text-ink tabular-nums">{homeLabel}</dd>
         </div>
       </dl>
