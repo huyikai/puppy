@@ -95,11 +95,12 @@ const daysAlive = daysOld();
 
     // -- Device-aware hint text ------------------------------------------
     // Show only one cue based on actual input + viewport. Detected once,
-    // re-evaluated on resize.
+    // re-evaluated on resize. Text describes the action verb only — never
+    // the device name itself.
     const HINT_TEXT = {
-      mobile:  '手机上滑',
-      tablet:  '触摸滑动',
-      desktop: 'PC 滚动',
+      mobile:  '上滑',
+      tablet:  '滑动',
+      desktop: '向下滚动',
     } as const;
 
     function detectDevice(): keyof typeof HINT_TEXT {
