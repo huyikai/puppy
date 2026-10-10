@@ -1,7 +1,7 @@
 ---
 date: "2026-10-09"
 title: ""
-mood: ""
+mood: "happy"
 weather: ""
 note: "白板正在喝羊奶～"
 photos:
