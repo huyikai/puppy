@@ -1,8 +1,5 @@
 ---
-import { daysOld } from '@/lib/days';
-
-const daysAlive = daysOld();
-
+const BIRTHDAY = '2026-09-10';
 // Cover portrait: AI-generated animated WebP based on白板's photos
 const COVER_PORTRAIT = '/cover/cover-animated.webp';
 ---
@@ -39,7 +36,7 @@ const COVER_PORTRAIT = '/cover/cover-animated.webp';
       </h1>
 
       <p class="mt-6 md:mt-8 text-base md:text-lg text-ink-soft max-w-md leading-relaxed">
-        今天已经 {daysAlive} 天大了
+        今天已经 <span data-days-old-cover>—</span> 天大了
       </p>
 
       <p class="mt-4 text-sm text-ink-muted tabular-nums">
@@ -51,21 +48,30 @@ const COVER_PORTRAIT = '/cover/cover-animated.webp';
   </div>
 </section>
 
-<script>
-  // Cover page: one-time bounce + click-to-scroll-past (no visible scroll cue).
-  const cover = document.querySelector<HTMLElement>('[data-cover]');
+<script define:vars={{ BIRTHDAY }}>
+  // Cover page: one-time bounce + click-to-scroll-past + dynamic day count.
+  const cover = document.querySelector('[data-cover]');
+
+  // Dynamic day count (updates daily without rebuild)
+  const start = new Date(BIRTHDAY + 'T00:00:00');
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffMs = today.getTime() - start.getTime();
+  const days = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  document.querySelectorAll('[data-days-old-cover]').forEach((el) => {
+    el.textContent = String(days);
+  });
 
   if (cover) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // -- One-time page bounce on first paint ----------------------------
     if (!reduceMotion && !sessionStorage.getItem('cover-bounced')) {
       sessionStorage.setItem('cover-bounced', '1');
       const target = Math.min(window.innerHeight * 0.55, 360);
-      const start = performance.now();
+      const startTime = performance.now();
       const dur = 1100;
-      const tick = (now: number) => {
-        const t = Math.min((now - start) / dur, 1);
+      const tick = (now) => {
+        const t = Math.min((now - startTime) / dur, 1);
         const eased = Math.sin(t * Math.PI);
         window.scrollTo({ top: target * eased, behavior: 'auto' });
         if (t < 1) requestAnimationFrame(tick);
@@ -73,9 +79,8 @@ const COVER_PORTRAIT = '/cover/cover-animated.webp';
       window.setTimeout(() => requestAnimationFrame(tick), 700);
     }
 
-    // -- Click anywhere on cover → smooth-scroll past -------------------
     cover.addEventListener('click', (e) => {
-      const inner = (e.target as HTMLElement).closest('a, button');
+      const inner = e.target.closest('a, button');
       if (inner) return;
       const bottom = cover.getBoundingClientRect().bottom + window.scrollY;
       window.scrollTo({ top: bottom, behavior: 'smooth' });

@@ -1,8 +1,6 @@
 ---
-import { daysOld } from '@/lib/days';
-
-const days = daysOld();
 const year = new Date().getFullYear();
+const BIRTHDAY = '2026-09-10';
 ---
 
 <footer class="mt-32 md:mt-48" style="padding-bottom: env(safe-area-inset-bottom);">
@@ -12,22 +10,21 @@ const year = new Date().getFullYear();
 
     <div class="py-20 md:py-28 flex flex-col items-center text-center gap-8 md:gap-10 reveal">
 
-      <!-- Personal mark (replaces "版本结束") -->
       <p class="folio" style="color: var(--accent); letter-spacing: 0.16em;">
         白板
       </p>
 
-      <!-- The number -->
+      <!-- The number (calculated client-side, updates daily without rebuild) -->
       <p
         class="font-medium leading-none tracking-tight tabular-nums"
         style="font-size: clamp(7rem, 18vw, 13rem);"
+        data-days-old
       >
-        {days}
+        —
       </p>
 
-      <!-- A memo line (replaces "白板出生了 29 天。") -->
       <p class="text-base text-ink-soft max-w-sm leading-relaxed">
-        白板出生 {days} 天了。<br />
+        白板出生 <span data-days-old-text>—</span> 天了。<br />
         他每天都在长大一点点。
       </p>
 
@@ -38,3 +35,22 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script define:vars={{ BIRTHDAY }}>
+  // Calculate days-old client-side so it updates daily without a rebuild
+  function calcDaysOld() {
+    const start = new Date(BIRTHDAY + 'T00:00:00');
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffMs = today.getTime() - start.getTime();
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  }
+
+  const days = calcDaysOld();
+  document.querySelectorAll('[data-days-old]').forEach((el) => {
+    el.textContent = String(days);
+  });
+  document.querySelectorAll('[data-days-old-text]').forEach((el) => {
+    el.textContent = String(days);
+  });
+</script>

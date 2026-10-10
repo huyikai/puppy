@@ -87,3 +87,14 @@ const homeLabel = formatChineseDate(HOMECOMING_DATE);
 
   <EndMark slot="footer" />
 </BaseLayout>
+
+<script define:vars={{ BIRTHDAY }}>
+  const start = new Date(BIRTHDAY + 'T00:00:00');
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffMs = today.getTime() - start.getTime();
+  const days = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  document.querySelectorAll('[data-days-old-about]').forEach((el) => {
+    el.textContent = String(days);
+  });
+</script>
