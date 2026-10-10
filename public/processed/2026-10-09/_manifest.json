@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-09",
+  "photos": [
+    {
+      "src": "/processed/2026-10-09/IMG_4133-800.webp",
+      "srcset": "/processed/2026-10-09/IMG_4133-400.webp 400w, /processed/2026-10-09/IMG_4133-800.webp 800w, /processed/2026-10-09/IMG_4133-1200.webp 1200w",
+      "width": 4032,
+      "height": 3024,
+      "aspectRatio": 1.3333,
+      "original": "IMG_4133.jpg"
+    }
+  ],
+  "videos": [],
+  "generatedAt": "2026-10-10T01:03:02.769Z"
+}
