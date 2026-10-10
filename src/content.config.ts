@@ -6,10 +6,13 @@ const days = defineCollection({
   schema: z.object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, '日期必须是 YYYY-MM-DD 格式'),
     title: z.string().optional().default(''),
+    // 空字符串等价于不填；非空时必须是枚举值
     mood: z
       .enum(['happy', 'playful', 'calm', 'sleepy', 'curious', 'brave'])
-      .optional(),
-    weather: z.string().optional(),
+      .or(z.literal(''))
+      .optional()
+      .default(''),
+    weather: z.string().optional().default(''),
     note: z.string().optional().default(''),
     photos: z
       .array(

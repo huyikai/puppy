@@ -10,7 +10,8 @@
     "build": "npm run process-photos && astro build",
     "preview": "astro preview",
     "process-photos": "node scripts/process-photos.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "new-day": "node scripts/new-day.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.1",

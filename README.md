@@ -31,33 +31,24 @@ npm run build
 ## 📷 添加新的一天
 
 ```bash
-# 1. 创建当日文件夹
-mkdir -p src/content/days/2026-10-15/raw
+# 1. 一键创建当日目录 + 合法的 meta.md 模板
+npm run new-day              # 用今天日期
+npm run new-day 2026-10-15   # 或指定日期
 
 # 2. 把素材拷进去
-cp /path/to/photos/*.HEIC src/content/days/2026-10-15/raw/
+#    ⚠️ HEIC 请先转 JPG（heic-convert 在部分环境会失败）：
+#    sips -s format jpeg xx.HEIC --out xx.jpg
+cp /path/to/photos/*.jpg src/content/days/2026-10-15/raw/
 cp /path/to/videos/*.MOV  src/content/days/2026-10-15/raw/
 
-# 3.（可选）写 meta.md
-cat > src/content/days/2026-10-15/meta.md <<'EOF'
----
-date: "2026-10-15"
-title: "第一次出门散步"
-mood: "brave"
-weather: "多云"
-photos:
-  - src: IMG_1900.HEIC
-  - src: IMG_1901.HEIC
-videos:
-  - src: IMG_1900.MOV
----
-EOF
+# 3. （可选）编辑 meta.md 填 title / mood / note
+#    mood 可选值：happy | playful | calm | sleepy | curious | brave（留空也行）
 
-# 4. 处理该天
-npm run process-photos 2026-10-15
+# 4. 处理该天素材
+npm run process-photos
 
 # 5. 推送（Vercel 自动部署）
-git add src/content/days/2026-10-15/
+git add .
 git commit -m "Day 8: 第一次出门散步"
 git push origin main
 ```
