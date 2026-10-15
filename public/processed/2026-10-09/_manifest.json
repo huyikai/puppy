@@ -8,24 +8,8 @@
       "height": 3024,
       "aspectRatio": 1.3333,
       "original": "IMG_4133.jpg"
-    },
-    {
-      "src": "/processed/2026-10-09/IMG_4152-800.webp",
-      "srcset": "/processed/2026-10-09/IMG_4152-400.webp 400w, /processed/2026-10-09/IMG_4152-800.webp 800w, /processed/2026-10-09/IMG_4152-1200.webp 1200w",
-      "width": 4032,
-      "height": 3024,
-      "aspectRatio": 1.3333,
-      "original": "IMG_4152.jpg"
-    },
-    {
-      "src": "/processed/2026-10-09/IMG_4153-800.webp",
-      "srcset": "/processed/2026-10-09/IMG_4153-400.webp 400w, /processed/2026-10-09/IMG_4153-800.webp 800w, /processed/2026-10-09/IMG_4153-1200.webp 1200w",
-      "width": 4032,
-      "height": 3024,
-      "aspectRatio": 1.3333,
-      "original": "IMG_4153.jpg"
     }
   ],
   "videos": [],
-  "generatedAt": "2026-10-15T01:48:01.355Z"
+  "generatedAt": "2026-10-15T02:05:58.753Z"
 }
